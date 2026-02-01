@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan - Food Nutrition Scanner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #00D084;
+            --primary-orange: #FF6B35;
+            --primary-purple: #7B2CBF;
+            --primary-blue: #4CC9F0;
+            --dark-bg: #1A1A2E;
+            --card-bg: #252540;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B8B8D1;
+            --success: #06FFA5;
+            --warning: #FFD60A;
+            --danger: #FF006E;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 208, 132, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(76, 201, 240, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        .app-logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* Main Scan Button */
+        .scan-section {
+            margin-bottom: 30px;
+        }
+
+        .scan-button {
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            border: none;
+            border-radius: 25px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 208, 132, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 208, 132, 0.5);
+        }
+
+        .scan-button:active {
+            transform: scale(0.98);
+        }
+
+        .scan-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .button-icon {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        /* OR Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--text-secondary);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--text-secondary), transparent);
+        }
+
+        .divider span {
+            padding: 0 15px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .upload-button {
+            padding: 15px 30px;
+            background: var(--card-bg);
+            border: 2px dashed var(--primary-purple);
+            border-radius: 15px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-button:hover {
+            background: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        #fileInput, #cameraInput {
+            display: none;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            display: none;
+            margin-bottom: 30px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .preview-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-image {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .analyze-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-orange), var(--danger));
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            border: 4px solid var(--card-bg);
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-blue), var(--primary-purple));
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+        }
+
+        .food-name {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .food-category {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .food-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Nutrition Grid */
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .nutrition-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary-green);
+            transition: all 0.3s ease;
+        }
+
+        .nutrition-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nutrition-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .nutrition-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary-green);
+        }
+
+        /* Benefits List */
+        .benefits-list {
+            margin-top: 15px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(6, 255, 165, 0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            background: rgba(6, 255, 165, 0.2);
+            transform: translateX(5px);
+        }
+
+        .benefit-icon {
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+
+        .benefit-text {
+            flex: 1;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Risks List */
+        .risk-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .risk-item:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* Recommendations */
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .recommendation-box {
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .good-for {
+            background: rgba(6, 255, 165, 0.15);
+            border: 2px solid var(--success);
+        }
+
+        .avoid-for {
+            background: rgba(255, 0, 110, 0.15);
+            border: 2px solid var(--danger);
+        }
+
+        .recommendation-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .recommendation-list {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(255, 214, 10, 0.15);
+            border: 2px solid var(--warning);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .disclaimer-icon {
+            font-size: 1.5rem;
+        }
+
+        .disclaimer-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scan-another {
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            color: white;
+        }
+
+        .share-button {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--primary-purple);
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-purple);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: rotate(180deg);
+            background: var(--primary-purple);
+        }
+
+        /* Light Mode Styles */
+        body.light-mode {
+            background: linear-gradient(135deg, #F0F4FF 0%, #E8F5E9 100%);
+            color: #1A1A2E;
+        }
+
+        body.light-mode::before {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 208, 132, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.15) 0%, transparent 50%);
+        }
+
+        body.light-mode .result-card,
+        body.light-mode .preview-card {
+            background: white;
+            color: #1A1A2E;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .upload-button {
+            background: white;
+            color: #1A1A2E;
+        }
+
+        body.light-mode .food-description,
+        body.light-mode .benefit-text,
+        body.light-mode .nutrition-label,
+        body.light-mode .disclaimer-text,
+        body.light-mode .recommendation-list {
+            color: #5A5A7A;
+        }
+
+        body.light-mode .nutrition-item {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-mode .dark-mode-toggle {
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .scan-button {
+                padding: 25px;
+                font-size: 1.3rem;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <span id="modeIcon">🌙</span>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="app-logo">🥗</div>
+            <h1 class="app-title">NutriScan</h1>
+            <p class="app-subtitle">FOOD • NUTRITION • ANALYSIS</p>
+        </div>
+
+        <!-- Main Scan Section -->
+        <div id="scanSection" class="scan-section">
+            <button class="scan-button" onclick="openCamera()">
+                <span class="button-icon">📸</span>
+                Camera Se Scan Karo
+            </button>
+
+            <div class="divider">
+                <span>YA</span>
+            </div>
+
+            <div class="upload-section">
+                <button class="upload-button" onclick="openGallery()">
+                    <span>📁</span> Gallery Se Photo Select Karo
+                </button>
+                <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="previewSection" class="preview-section">
+            <div class="preview-card">
+                <img id="previewImage" class="preview-image" alt="Food Preview">
+                <button class="analyze-button" onclick="analyzeImage()">
+                    <span>🔍</span> Analyze Karo
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="loadingSection" class="loading">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">AI se analyze ho raha hai... 🤖</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section">
+            <!-- Food Information Card -->
+            <div class="result-card">
+                <h2 class="card-title">
+                    <span class="card-icon">🍎</span>
+                    Food Information
+                </h2>
+                <h3 class="food-name" id="foodName">Apple (Seb)</h3>
+                <span class="food-category" id="foodCategory">🌱 Vegetarian • Raw</span>
+                <p class="food-description" id="foodDescription">
+                    Apple ek popular fruit hai jo India me commonly khaya jata hai. Ye fresh, juicy aur sweet hota hai. "An apple a day keeps the doctor away" - ye famous saying hai.
+                </p>
+            </div>
+
+            <!-- Nutrition Information Card -->
+            <div class="result-card">
+                <h2 class="card-title">
+                    <span class="card-icon">📊</span>
+                    Nutrition Facts (per 100g)
+                </h2>
+                <div class="nutrition-grid" id="nutritionGrid">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <!-- Health Benefits Card -->
+            <div class="result-card">
+                <h2 class="card-title">
+                    <span class="card-icon">💪</span>
+                    Health Benefits (Fayde)
+                </h2>
+                <div class="benefits-list" id="benefitsList">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <!-- Health Risks Card -->
+            <div class="result-card">
+                <h2 class="card-title">
+                    <span class="card-icon">⚠️</span>
+                    Health Risks (Nuksan)
+                </h2>
+                <div class="benefits-list" id="risksList">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <!-- Recommendations Card -->
+            <div class="result-card">
+                <h2 class="card-title">
+                    <span class="card-icon">👥</span>
+                    Who Should Eat / Avoid
+                </h2>
+                <div class="recommendation-grid">
+                    <div class="recommendation-box good-for">
+                        <div class="recommendation-title">✅ Good For</div>
+                        <div class="recommendation-list" id="goodForList">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                    <div class="recommendation-box avoid-for">
+                        <div class="recommendation-title">❌ Avoid For</div>
+                        <div class="recommendation-list" id="avoidForList">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer">
+                <span class="disclaimer-icon">⚕️</span>
+                <div class="disclaimer-text">
+                    <strong>Disclaimer:</strong> This app provides general nutrition information only. It is not medical advice. Please consult a healthcare professional for personalized dietary guidance.
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-button scan-another" onclick="scanAnother()">
+                    📸 Scan Another
+                </button>
+                <button class="action-button share-button" onclick="shareResults()">
+                    📤 Share
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===========================
+        // 🎯 GLOBAL VARIABLES
+        // ===========================
+        let currentImage = null;
+
+        // ===========================
+        // 🤖 AI FOOD DATABASE
+        // ===========================
+        // This is a simulated AI database with extensive food information
+        // In a real app, this would be connected to an actual AI API like Claude Vision or GPT-4 Vision
+        
+        const foodDatabase = {
+            'apple': {
+                name: 'Apple (Seb)',
+                hindi: 'सेब',
+                category: '🌱 Vegetarian • Raw Fruit',
+                description: 'Apple ek popular fruit hai jo India me commonly khaya jata hai. Ye fresh, juicy aur sweet hota hai. "An apple a day keeps the doctor away" - ye famous saying hai kyunki apple bohot nutritious hota hai.',
+                nutrition: {
+                    'Calories': '52 kcal',
+                    'Protein': '0.3 g',
+                    'Carbs': '14 g',
+                    'Fiber': '2.4 g',
+                    'Fat': '0.2 g',
+                    'Vitamin C': '4.6 mg',
+                    'Potassium': '107 mg',
+                    'Calcium': '6 mg'
+                },
+                benefits: [
+                    '💓 Heart ke liye bahut accha - cholesterol kam karta hai',
+                    '🧠 Brain function improve karta hai - memory boost',
+                    '🦷 Teeth ko clean karta hai - natural toothbrush',
+                    '⚖️ Weight loss me madad - fiber se pet bharega',
+                    '🍃 Digestion improve - constipation door kare',
+                    '💪 Immunity boost - Vitamin C se'
+                ],
+                risks: [
+                    '⚠️ Zyada khane se pet me gas ho sakti hai',
+                    '🦷 Seeds me cyanide hota hai - beej mat khao',
+                    '😷 Kuch logo ko allergy ho sakti hai',
+                    '💊 Diabetes patients moderation me khaye'
+                ],
+                goodFor: [
+                    'Weight Loss',
+                    'Heart Health',
+                    'Students (Brain)',
+                    'General Health',
+                    'Kids Growth'
+                ],
+                avoidFor: [
+                    'Apple Allergy',
+                    'Severe IBS',
+                    'Excess Consumption'
+                ]
+            },
+            'banana': {
+                name: 'Banana (Kela)',
+                hindi: 'केला',
+                category: '🌱 Vegetarian • Raw Fruit',
+                description: 'Banana India ka sabse common fruit hai. Ye energy ka best source hai aur athletes ke liye perfect hai. Ripe banana meetha hota hai aur raw banana cooking me use hota hai.',
+                nutrition: {
+                    'Calories': '89 kcal',
+                    'Protein': '1.1 g',
+                    'Carbs': '23 g',
+                    'Fiber': '2.6 g',
+                    'Fat': '0.3 g',
+                    'Potassium': '358 mg',
+                    'Vitamin B6': '0.4 mg',
+                    'Magnesium': '27 mg'
+                },
+                benefits: [
+                    '⚡ Instant energy boost - sports ke liye perfect',
+                    '💪 Muscle cramps rokta hai - potassium se',
+                    '😊 Mood improve - serotonin boost',
+                    '🏃 Athletes ke liye best pre/post workout',
+                    '💤 Better sleep - tryptophan se',
+                    '🍃 Digestion me help - fiber'
+                ],
+                risks: [
+                    '⚠️ Diabetes patients limit kare - sugar zyada',
+                    '🦷 Teeth ke liye chewing gum jaisa - stick karta hai',
+                    '😴 Too much se weight gain',
+                    '💊 Kidney problems me avoid kare - potassium high'
+                ],
+                goodFor: [
+                    'Athletes',
+                    'Weight Gain',
+                    'Energy Boost',
+                    'Kids',
+                    'Muscle Building'
+                ],
+                avoidFor: [
+                    'Diabetes (limit)',
+                    'Kidney Disease',
+                    'Weight Loss Goal'
+                ]
+            },
+            'tomato': {
+                name: 'Tomato (Tamatar)',
+                hindi: 'टमाटर',
+                category: '🌱 Vegetarian • Raw/Cooked Vegetable',
+                description: 'Tomato technically ek fruit hai par vegetable ki tarah use hota hai. India me har sabzi me dal sakte hai. Raw salad me ya cooked curry me - dono me tasty.',
+                nutrition: {
+                    'Calories': '18 kcal',
+                    'Protein': '0.9 g',
+                    'Carbs': '3.9 g',
+                    'Fiber': '1.2 g',
+                    'Fat': '0.2 g',
+                    'Vitamin C': '14 mg',
+                    'Lycopene': 'High',
+                    'Potassium': '237 mg'
+                },
+                benefits: [
+                    '❤️ Heart disease ka risk kam - lycopene se',
+                    '👀 Eyes ke liye accha - Vitamin A',
+                    '☀️ Skin protection from sun - lycopene',
+                    '🎗️ Cancer prevention - antioxidants',
+                    '💧 Hydration - 95% water',
+                    '💪 Weight loss friendly - low calorie'
+                ],
+                risks: [
+                    '⚠️ Acidity badha sakta hai - empty stomach avoid',
+                    '🦴 Kidney stones ka risk - oxalate',
+                    '😷 Allergy possible - skin rashes',
+                    '💊 Arthritis me kuch logo ko problem'
+                ],
+                goodFor: [
+                    'Heart Health',
+                    'Weight Loss',
+                    'Skin Health',
+                    'Eye Health',
+                    'Cancer Prevention'
+                ],
+                avoidFor: [
+                    'Acidity Issues',
+                    'Kidney Stones',
+                    'GERD',
+                    'Tomato Allergy'
+                ]
+            },
+            'spinach': {
+                name: 'Spinach (Palak)',
+                hindi: 'पालक',
+                category: '🌱 Vegetarian • Leafy Green',
+                description: 'Palak ek superfood hai - iron ka best source. Popeye cartoon me dikhaya gaya hai ki palak khane se strength aati hai. Ye sach bhi hai!',
+                nutrition: {
+                    'Calories': '23 kcal',
+                    'Protein': '2.9 g',
+                    'Carbs': '3.6 g',
+                    'Fiber': '2.2 g',
+                    'Fat': '0.4 g',
+                    'Iron': '2.7 mg',
+                    'Calcium': '99 mg',
+                    'Vitamin K': '483 mcg'
+                },
+                benefits: [
+                    '💪 Muscle growth - protein aur iron',
+                    '🩸 Blood me oxygen improve - iron',
+                    '👀 Eye health - lutein aur zeaxanthin',
+                    '🦴 Bone strength - calcium aur Vitamin K',
+                    '🧠 Brain function boost',
+                    '💚 Detoxification - chlorophyll'
+                ],
+                risks: [
+                    '⚠️ Kidney stones risk - oxalate high',
+                    '💊 Blood thinning meds se react - Vitamin K',
+                    '🦷 Teeth pe film - oxalic acid',
+                    '😷 Raw palak me bacteria - cook karo'
+                ],
+                goodFor: [
+                    'Anemia',
+                    'Muscle Building',
+                    'Bone Health',
+                    'Eye Health',
+                    'Pregnancy'
+                ],
+                avoidFor: [
+                    'Kidney Stones',
+                    'Blood Thinners',
+                    'Thyroid Issues'
+                ]
+            },
+            'rice': {
+                name: 'Rice (Chawal)',
+                hindi: 'चावल',
+                category: '🌾 Vegetarian • Grain/Staple',
+                description: 'Rice India ka main food hai. White rice aur brown rice dono milte hai. South India me rice bohot zyada khaya jata hai. Energy ka best source hai.',
+                nutrition: {
+                    'Calories': '130 kcal',
+                    'Protein': '2.7 g',
+                    'Carbs': '28 g',
+                    'Fiber': '0.4 g',
+                    'Fat': '0.3 g',
+                    'Iron': '0.2 mg',
+                    'Magnesium': '12 mg',
+                    'B Vitamins': 'Good'
+                },
+                benefits: [
+                    '⚡ Quick energy source - carbs',
+                    '😊 Gluten-free - celiac patients ke liye safe',
+                    '🍃 Easy to digest - stomach ke liye light',
+                    '💪 Post-workout recovery',
+                    '🧠 Brain fuel - glucose',
+                    '💰 Affordable aur filling'
+                ],
+                risks: [
+                    '⚠️ Diabetes risk - high glycemic index',
+                    '⚖️ Weight gain agar zyada khao',
+                    '🌾 Brown rice better - white rice me fiber kam',
+                    '💊 Arsenic traces - dhoke achhe se'
+                ],
+                goodFor: [
+                    'Athletes',
+                    'Weight Gain',
+                    'Quick Energy',
+                    'Celiac Disease',
+                    'Kids'
+                ],
+                avoidFor: [
+                    'Diabetes (limit)',
+                    'Weight Loss',
+                    'Low-Carb Diet'
+                ]
+            },
+            'chicken': {
+                name: 'Chicken (Murgi)',
+                hindi: 'मुर्गी',
+                category: '🍗 Non-Vegetarian • Poultry',
+                description: 'Chicken India me sabse popular non-veg food hai. Protein ka excellent source hai. Gym jaane wale log bohot khate hai muscle building ke liye.',
+                nutrition: {
+                    'Calories': '165 kcal',
+                    'Protein': '31 g',
+                    'Carbs': '0 g',
+                    'Fiber': '0 g',
+                    'Fat': '3.6 g',
+                    'Iron': '0.9 mg',
+                    'Vitamin B6': '0.5 mg',
+                    'Niacin': '8.2 mg'
+                },
+                benefits: [
+                    '💪 Muscle building - high protein',
+                    '⚖️ Weight loss friendly - lean meat',
+                    '🦴 Bone strength - phosphorus',
+                    '😊 Mood boost - tryptophan',
+                    '❤️ Heart health - omega-3 (in moderation)',
+                    '🧠 Brain development'
+                ],
+                risks: [
+                    '⚠️ Salmonella infection - raw chicken danger',
+                    '🔥 Fried chicken unhealthy - oil zyada',
+                    '💊 Antibiotics residue - organic choose karo',
+                    '🧂 Processed chicken me sodium high'
+                ],
+                goodFor: [
+                    'Muscle Building',
+                    'Weight Loss',
+                    'Protein Needs',
+                    'Athletes',
+                    'Growing Kids'
+                ],
+                avoidFor: [
+                    'Vegetarians',
+                    'Chicken Allergy',
+                    'Gout (limit)'
+                ]
+            },
+            'default': {
+                name: 'Unknown Food Item',
+                hindi: 'अज्ञात खाद्य पदार्थ',
+                category: '❓ Unknown',
+                description: 'Ye food item hamari database me nahi hai, par hum kuch general nutrition info provide kar sakte hai. Better results ke liye clear photo upload kare.',
+                nutrition: {
+                    'Calories': 'Variable',
+                    'Protein': 'Check label',
+                    'Carbs': 'Check label',
+                    'Fiber': 'Variable',
+                    'Fat': 'Variable',
+                    'Vitamins': 'Variable',
+                    'Minerals': 'Variable'
+                },
+                benefits: [
+                    '🥗 Fresh food usually healthy hota hai',
+                    '🌈 Colorful foods me nutrients zyada',
+                    '💧 Hydrating foods body ke liye acche',
+                    '🍃 Natural foods processed se better'
+                ],
+                risks: [
+                    '⚠️ Moderation me khana important',
+                    '😷 Allergies check karo',
+                    '💊 Medicine interactions possible',
+                    '🔍 Unknown foods ko research karo'
+                ],
+                goodFor: [
+                    'Varied Diet',
+                    'Exploration'
+                ],
+                avoidFor: [
+                    'Allergies',
+                    'Medical Conditions'
+                ]
+            }
+        };
+
+        // ===========================
+        // 📸 CAMERA & FILE FUNCTIONS
+        // ===========================
+        
+        function openCamera() {
+            document.getElementById('cameraInput').click();
+        }
+
+        function openGallery() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                currentImage = file;
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    
+                    // Hide scan section, show preview
+                    document.getElementById('scanSection').style.display = 'none';
+                    document.getElementById('previewSection').style.display = 'block';
+                    
+                    // Scroll to preview
+                    document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ===========================
+        // 🤖 AI IMAGE ANALYSIS
+        // ===========================
+        
+        function analyzeImage() {
+            // Hide preview, show loading
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            
+            // Simulate AI processing delay (in real app, this would be an API call)
+            setTimeout(() => {
+                // Simulate AI recognition
+                const recognizedFood = simulateAIRecognition();
+                
+                // Display results
+                displayResults(recognizedFood);
+                
+                // Hide loading, show results
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'block';
+                
+                // Scroll to results
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+
+        // ===========================
+        // 🎯 AI RECOGNITION SIMULATOR
+        // ===========================
+        
+        function simulateAIRecognition() {
+            // In a real app, this would use:
+            // 1. Claude Vision API
+            // 2. GPT-4 Vision API
+            // 3. Google Vision AI
+            // 4. Custom trained model
+            
+            // For demo, we'll randomly select or use keywords
+            const foods = Object.keys(foodDatabase).filter(key => key !== 'default');
+            
+            // Random selection for demo (in production, use actual AI)
+            const randomFood = foods[Math.floor(Math.random() * foods.length)];
+            
+            return randomFood;
+        }
+
+        // ===========================
+        // 📊 DISPLAY RESULTS
+        // ===========================
+        
+        function displayResults(foodKey) {
+            const food = foodDatabase[foodKey] || foodDatabase['default'];
+            
+            // Update food information
+            document.getElementById('foodName').textContent = food.name;
+            document.getElementById('foodCategory').innerHTML = food.category;
+            document.getElementById('foodDescription').textContent = food.description;
+            
+            // Update nutrition grid
+            const nutritionGrid = document.getElementById('nutritionGrid');
+            nutritionGrid.innerHTML = '';
+            Object.entries(food.nutrition).forEach(([key, value]) => {
+                nutritionGrid.innerHTML += `
+                    <div class="nutrition-item">
+                        <div class="nutrition-label">${key}</div>
+                        <div class="nutrition-value">${value}</div>
+                    </div>
+                `;
+            });
+            
+            // Update benefits list
+            const benefitsList = document.getElementById('benefitsList');
+            benefitsList.innerHTML = '';
+            food.benefits.forEach(benefit => {
+                benefitsList.innerHTML += `
+                    <div class="benefit-item">
+                        <span class="benefit-icon">✅</span>
+                        <span class="benefit-text">${benefit}</span>
+                    </div>
+                `;
+            });
+            
+            // Update risks list
+            const risksList = document.getElementById('risksList');
+            risksList.innerHTML = '';
+            food.risks.forEach(risk => {
+                risksList.innerHTML += `
+                    <div class="risk-item">
+                        <span class="benefit-icon">⚠️</span>
+                        <span class="benefit-text">${risk}</span>
+                    </div>
+                `;
+            });
+            
+            // Update recommendations
+            document.getElementById('goodForList').innerHTML = food.goodFor.map(item => 
+                `<div>• ${item}</div>`
+            ).join('');
+            
+            document.getElementById('avoidForList').innerHTML = food.avoidFor.map(item => 
+                `<div>• ${item}</div>`
+            ).join('');
+        }
+
+        // ===========================
+        // 🔄 ACTION FUNCTIONS
+        // ===========================
+        
+        function scanAnother() {
+            // Reset everything
+            currentImage = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('cameraInput').value = '';
+            
+            // Show scan section, hide others
+            document.getElementById('scanSection').style.display = 'block';
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function shareResults() {
+            const foodName = document.getElementById('foodName').textContent;
+            const shareText = `🥗 NutriScan Results:\n\n` +
+                            `Food: ${foodName}\n\n` +
+                            `Check out this amazing food analysis app! 📊\n` +
+                            `#NutriScan #HealthyEating #Nutrition`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'NutriScan Results',
+                    text: shareText
+                }).catch(err => console.log('Share cancelled'));
+            } else {
+                // Fallback - copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Results copied to clipboard! 📋');
+                });
+            }
+        }
+
+        // ===========================
+        // 🌙 DARK MODE TOGGLE
+        // ===========================
+        
+        function toggleDarkMode() {
+            const body = document.body;
+            const modeIcon = document.getElementById('modeIcon');
+            
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                modeIcon.textContent = '☀️';
+            } else {
+                modeIcon.textContent = '🌙';
+            }
+        }
+
+        // ===========================
+        // 🎬 INITIALIZATION
+        // ===========================
+        
+        // Add some entrance animations
+        window.addEventListener('load', () => {
+            document.querySelector('.container').style.opacity = '0';
+            document.querySelector('.container').style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                document.querySelector('.container').style.transition = 'all 0.8s ease';
+                document.querySelector('.container').style.opacity = '1';
+                document.querySelector('.container').style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

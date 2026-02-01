@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriScan - Food Nutrition Scanner</title>
+
+    <!-- ============================================================
+         ✅ GOOGLE ADSENSE / ADMOB — STEP 1: Main AdSense Script Tag
+         ─────────────────────────────────────────────────────────────
+         📌 APNA PUBLISHER ID YAHAN DALO: "ca-pub-XXXXXXXXXXXXXXXXX"
+            → AdSense/AdMob dashboard se milega
+         📌 data-adbreak-test="on"  → TESTING mode (production me HATAO)
+         📌 data-admob-interstitial-slot → AdMob Interstitial Unit ID
+         📌 data-admob-rewarded-slot     → AdMob Rewarded Unit ID
+         ============================================================ -->
+    <script async
+      data-adbreak-test="on"
+      data-admob-interstitial-slot="ca-app-pub-XXXXXXXXXXXXXXXXX/XXXXXXXXXX"
+      data-admob-rewarded-slot="ca-app-pub-XXXXXXXXXXXXXXXXX/XXXXXXXXXX"
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXX"
+      crossorigin="anonymous">
+    </script>
+    <!-- ============================================================
+         ✅ STEP 2: adBreak() aur adConfig() functions initialize karo
+         ============================================================ -->
+    <script>
+      window.adsbygoogle = window.adsbygoogle || [];
+      const adBreak = adConfig = function(o) { adsbygoogle.push(o); }
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap');
         
@@ -625,6 +650,28 @@
                 Camera Se Scan Karo
             </button>
 
+            <!-- ============================================================
+                 📌 AD PLACEMENT #1 — BANNER AD (Home Screen, under Scan button)
+                 ─────────────────────────────────────────────────────────────
+                 • Type    : Banner (responsive)
+                 • Trigger : Page load — always visible on home screen
+                 • WHY HERE: User dekh raha hai scan button ke neeche,
+                   attention available hai → Banner ad dikhao
+                 • data-ad-slot → Apna Banner Ad Unit ID dalo
+                 ============================================================ -->
+            <div style="margin-top: 18px; text-align: center; min-height: 100px;">
+                <ins class="adsbygoogle"
+                     style="display: block; margin: 0 auto;"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"
+                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX">
+                </ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+
             <div class="divider">
                 <span>YA</span>
             </div>
@@ -1088,20 +1135,52 @@
             // Hide preview, show loading
             document.getElementById('previewSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
-            
-            // Simulate AI processing delay (in real app, this would be an API call)
+
+            // ============================================================
+            // 📌 AD PLACEMENT #2 — INTERSTITIAL AD (Before AI analysis)
+            // ─────────────────────────────────────────────────────────────
+            // • Type    : Interstitial (full-screen)
+            // • Trigger : User clicks "Analyze Karo" button
+            // • WHY HERE: Natural break point — user action hai,
+            //   loading wait kar raha hai → perfect interstitial moment
+            // • beforeAd  → Ad dikhane se pehle UI pause
+            // • afterAd   → Ad band ho jaane ke baad AI processing shuru
+            // ============================================================
+            adBreak({
+                type: 'next',
+                name: 'before-analysis',
+                beforeAd: function() {
+                    // Loading already visible, user ko pata hai ki processing ho raha hai
+                    document.getElementById('loadingSection').querySelector('.loading-text').textContent = '⏳ Ek second...';
+                },
+                afterAd: function() {
+                    // Ad band — ab actual AI processing shuru
+                    document.getElementById('loadingSection').querySelector('.loading-text').textContent = 'AI se analyze ho raha hai... 🤖';
+                    runAIAnalysis(); // Actual processing function
+                }
+            });
+
+            // Fallback: Agar ad nahi dika (no suitable ad), toh directly run karo
+            // AdBreak afterAd call nahi karta agar ad nahi dika → timeout se handle
+            setTimeout(function() {
+                if (document.getElementById('loadingSection').style.display === 'block' &&
+                    document.getElementById('resultsSection').style.display !== 'block') {
+                    runAIAnalysis();
+                }
+            }, 3500);
+        }
+
+        // ============================================================
+        // 🤖 Actual AI Processing (Interstitial ke baad chalega)
+        // ============================================================
+        function runAIAnalysis() {
+            // Simulated AI processing delay (real app me API call hogi yahan)
             setTimeout(() => {
-                // Simulate AI recognition
                 const recognizedFood = simulateAIRecognition();
-                
-                // Display results
                 displayResults(recognizedFood);
-                
-                // Hide loading, show results
+
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
-                
-                // Scroll to results
                 document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
             }, 2000);
         }
@@ -1189,7 +1268,122 @@
         // ===========================
         
         function scanAnother() {
-            // Reset everything
+            // ============================================================
+            // 📌 AD PLACEMENT #3 — REWARDED AD (Before scanning again)
+            // ─────────────────────────────────────────────────────────────
+            // • Type    : Rewarded (user choice — watch ad voluntarily)
+            // • Trigger : User clicks "Scan Another" button
+            // • WHY HERE: User results dekh chuka hai, ab new scan chahiye
+            //   → Rewarded ad offer karo. Agar watch kiya toh bonus info
+            //     milega. Agar skip kiya toh directly scan page.
+            // • beforeReward → Ad available hai toh "Watch Ad" button dikao
+            // • adViewed     → Bonus reward diya
+            // • adDismissed  → Directly scan page pe jaao
+            // ============================================================
+
+            // Rewarded ad button show karne ke liye ek temporary overlay
+            const rewardBanner = document.createElement('div');
+            rewardBanner.id = 'rewardBanner';
+            rewardBanner.style.cssText = `
+                position:fixed; top:0; left:0; width:100%; height:100%;
+                background:rgba(26,26,46,0.92); z-index:9999;
+                display:flex; flex-direction:column;
+                align-items:center; justify-content:center; gap:16px;
+                padding:30px; text-align:center;
+            `;
+            rewardBanner.innerHTML = `
+                <div style="font-size:2.8rem;">🎁</div>
+                <h2 style="font-size:1.4rem; font-weight:800; color:#fff; margin:0;">
+                    Bonus Nutrition Tip Chahiye?
+                </h2>
+                <p style="color:#B8B8D1; font-size:0.95rem; margin:0; max-width:280px; line-height:1.5;">
+                    Ek short ad dekho aur apne next scan ke saath
+                    <strong style="color:#FFD60A;">extra detail</strong> milegi!
+                </p>
+                <button id="watchAdBtn" style="
+                    margin-top:8px; padding:14px 32px;
+                    background:linear-gradient(135deg,#FFD60A,#FF6B35);
+                    border:none; border-radius:14px; color:#1A1A2E;
+                    font-family:'Outfit',sans-serif; font-size:1.1rem;
+                    font-weight:800; cursor:pointer;
+                ">📺 Watch Ad & Get Bonus</button>
+                <button id="skipAdBtn" style="
+                    margin-top:4px; padding:10px 24px;
+                    background:transparent; border:2px solid #B8B8D1;
+                    border-radius:10px; color:#B8B8D1;
+                    font-family:'Outfit',sans-serif; font-size:0.85rem;
+                    font-weight:600; cursor:pointer;
+                ">Skip</button>
+            `;
+            document.body.appendChild(rewardBanner);
+
+            let showRewardedAdFn = null;
+            let adWasTriggered = false;
+
+            // Skip button → directly scan page
+            document.getElementById('skipAdBtn').addEventListener('click', function() {
+                rewardBanner.remove();
+                goToScanPage();
+            });
+
+            // Watch Ad button → call showAdFn (only active if ad is available)
+            document.getElementById('watchAdBtn').addEventListener('click', function() {
+                if (showRewardedAdFn) {
+                    adWasTriggered = true;
+                    showRewardedAdFn();
+                } else {
+                    // Ad not ready yet, go directly
+                    rewardBanner.remove();
+                    goToScanPage();
+                }
+            });
+
+            // adBreak call for rewarded ad
+            adBreak({
+                type: 'reward',
+                name: 'scan-again-reward',
+                beforeReward: function(showAdFn) {
+                    // Ad available hai — showAdFn store karo
+                    showRewardedAdFn = showAdFn;
+                },
+                beforeAd: function() {
+                    // Ad dikhane se pehle banner hide karo
+                    rewardBanner.style.display = 'none';
+                },
+                adDismissed: function() {
+                    // User ne ad skip kiya → bonus nahi milega, scan page pe jaao
+                    rewardBanner.remove();
+                    goToScanPage();
+                },
+                adViewed: function() {
+                    // ✅ Ad poori dekha → bonus reward
+                    rewardBanner.remove();
+                    alert('🎉 Bonus! Aapko next scan me extra detail milegi. Thanks for watching!');
+                    goToScanPage();
+                },
+                afterAd: function() {
+                    // Ad overlay band — agar banner abhi hai toh hatao
+                    if (document.getElementById('rewardBanner')) {
+                        rewardBanner.remove();
+                        goToScanPage();
+                    }
+                }
+            });
+
+            // Fallback: Agar adBreak ne beforeReward nahi call kiya
+            // (matlab koi suitable ad nahi tha), toh 2s baad auto-skip
+            setTimeout(function() {
+                if (document.getElementById('rewardBanner') && !adWasTriggered) {
+                    rewardBanner.remove();
+                    goToScanPage();
+                }
+            }, 2500);
+        }
+
+        // ============================================================
+        // 🔄 Scan Page Pe Jaao (Reset logic)
+        // ============================================================
+        function goToScanPage() {
             currentImage = null;
             document.getElementById('fileInput').value = '';
             document.getElementById('cameraInput').value = '';
@@ -1247,6 +1441,12 @@
         
         // Add some entrance animations
         window.addEventListener('load', () => {
+            // ============================================================
+            // ✅ STEP 3: adConfig() — App configuration Google ko batao
+            // Google ko batao ki app me sound hai ya nahi etc.
+            // ============================================================
+            adConfig({ sound: 'off' });
+
             document.querySelector('.container').style.opacity = '0';
             document.querySelector('.container').style.transform = 'translateY(20px)';
             

@@ -3,27 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriScan - Food Nutrition Scanner</title>
+    <title>NutriScan - AI Food Scanner (Claude Vision)</title>
 
     <!-- ============================================================
-         ✅ GOOGLE ADSENSE / ADMOB — STEP 1: Main AdSense Script Tag
-         ─────────────────────────────────────────────────────────────
-         📌 APNA PUBLISHER ID YAHAN DALO: "ca-pub-XXXXXXXXXXXXXXXXX"
-            → AdSense/AdMob dashboard se milega
-         📌 data-adbreak-test="on"  → ca-app-pub-9680042092367503/7542566487
-         📌 data-admob-interstitial-slot → ca-app-pub-9680042092367503/6359545005
-         📌 data-admob-rewarded-slot     → ca-app-pub-9680042092367503/1384158725
+         ✅ GOOGLE ADSENSE / ADMOB INTEGRATION
          ============================================================ -->
     <script async
-      data-adbreak-test=ca-app-pub-9680042092367503/7542566487
-      data-admob-interstitial-slot=ca-app-pub-9680042092367503/6359545005
-      data-admob-rewarded-slot=ca-app-pub-9680042092367503/1384158725
+      data-adbreak-test="on"
+      data-admob-interstitial-slot="ca-app-pub-XXXXXXXXXXXXXXXXX/XXXXXXXXXX"
+      data-admob-rewarded-slot="ca-app-pub-XXXXXXXXXXXXXXXXX/XXXXXXXXXX"
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXX"
       crossorigin="anonymous">
     </script>
-    <!-- ============================================================
-         ✅ STEP 2: adBreak() aur adConfig() functions initialize karo
-         ============================================================ -->
     <script>
       window.adsbygoogle = window.adsbygoogle || [];
       const adBreak = adConfig = function(o) { adsbygoogle.push(o); }
@@ -61,7 +52,6 @@
             position: relative;
         }
 
-        /* Animated background particles */
         body::before {
             content: '';
             position: fixed;
@@ -88,7 +78,6 @@
             z-index: 1;
         }
 
-        /* Header */
         .app-header {
             text-align: center;
             margin-bottom: 30px;
@@ -123,7 +112,6 @@
             letter-spacing: 2px;
         }
 
-        /* Main Scan Button */
         .scan-section {
             margin-bottom: 30px;
         }
@@ -176,7 +164,6 @@
             margin-right: 10px;
         }
 
-        /* OR Divider */
         .divider {
             display: flex;
             align-items: center;
@@ -198,7 +185,6 @@
             font-size: 0.8rem;
         }
 
-        /* Upload Section */
         .upload-section {
             text-align: center;
             margin-bottom: 30px;
@@ -226,7 +212,6 @@
             display: none;
         }
 
-        /* Preview Section */
         .preview-section {
             display: none;
             margin-bottom: 30px;
@@ -277,7 +262,6 @@
             box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
         }
 
-        /* Loading Animation */
         .loading {
             display: none;
             text-align: center;
@@ -311,7 +295,6 @@
             font-weight: 600;
         }
 
-        /* Results Section */
         .results-section {
             display: none;
             animation: slideUp 0.5s ease;
@@ -373,7 +356,6 @@
             margin-bottom: 15px;
         }
 
-        /* Nutrition Grid */
         .nutrition-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -407,7 +389,6 @@
             color: var(--primary-green);
         }
 
-        /* Benefits List */
         .benefits-list {
             margin-top: 15px;
         }
@@ -439,7 +420,6 @@
             line-height: 1.5;
         }
 
-        /* Risks List */
         .risk-item {
             display: flex;
             align-items: flex-start;
@@ -456,7 +436,6 @@
             transform: translateX(5px);
         }
 
-        /* Recommendations */
         .recommendation-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -492,7 +471,6 @@
             line-height: 1.6;
         }
 
-        /* Disclaimer */
         .disclaimer {
             background: rgba(255, 214, 10, 0.15);
             border: 2px solid var(--warning);
@@ -514,7 +492,6 @@
             line-height: 1.5;
         }
 
-        /* Action Buttons */
         .action-buttons {
             display: flex;
             gap: 15px;
@@ -548,7 +525,6 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        /* Dark Mode Toggle */
         .dark-mode-toggle {
             position: fixed;
             top: 20px;
@@ -572,7 +548,6 @@
             background: var(--primary-purple);
         }
 
-        /* Light Mode Styles */
         body.light-mode {
             background: linear-gradient(135deg, #F0F4FF 0%, #E8F5E9 100%);
             color: #1A1A2E;
@@ -613,7 +588,6 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .app-title {
                 font-size: 2rem;
@@ -645,20 +619,26 @@
 
         <!-- Main Scan Section -->
         <div id="scanSection" class="scan-section">
+            <!-- Camera Button (Primary) -->
             <button class="scan-button" onclick="openCamera()">
                 <span class="button-icon">📸</span>
                 Camera Se Scan Karo
             </button>
 
-            <!-- ============================================================
-                 📌 AD PLACEMENT #1 — BANNER AD (Home Screen, under Scan button)
-                 ─────────────────────────────────────────────────────────────
-                 • Type    : Banner (responsive)
-                 • Trigger : Page load — always visible on home screen
-                 • WHY HERE: User dekh raha hai scan button ke neeche,
-                   attention available hai → Banner ad dikhao
-                 • data-ad-slot → Apna Banner Ad Unit ID dalo
-                 ============================================================ -->
+            <!-- Gallery Button (Secondary, below camera) -->
+            <button class="upload-button" onclick="openGallery()" style="
+                width: 100%;
+                margin-top: 15px;
+                padding: 18px 30px;
+                font-size: 1.1rem;
+            ">
+                <span>📁</span> Gallery Se Photo Select Karo
+            </button>
+
+            <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
+            <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+
+            <!-- Banner Ad Placement -->
             <div style="margin-top: 18px; text-align: center; min-height: 100px;">
                 <ins class="adsbygoogle"
                      style="display: block; margin: 0 auto;"
@@ -672,16 +652,8 @@
                 </script>
             </div>
 
-            <div class="divider">
-                <span>YA</span>
-            </div>
-
-            <div class="upload-section">
-                <button class="upload-button" onclick="openGallery()">
-                    <span>📁</span> Gallery Se Photo Select Karo
-                </button>
-                <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
-                <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+            <div class="divider" style="margin-top: 25px;">
+                <span></span>
             </div>
         </div>
 
@@ -690,7 +662,7 @@
             <div class="preview-card">
                 <img id="previewImage" class="preview-image" alt="Food Preview">
                 <button class="analyze-button" onclick="analyzeImage()">
-                    <span>🔍</span> Analyze Karo
+                    <span>🔍</span> AI Se Analyze Karo
                 </button>
             </div>
         </div>
@@ -698,58 +670,45 @@
         <!-- Loading Section -->
         <div id="loadingSection" class="loading">
             <div class="loading-spinner"></div>
-            <p class="loading-text">AI se analyze ho raha hai... 🤖</p>
+            <p class="loading-text">Claude AI analyzing... 🤖</p>
         </div>
 
         <!-- Results Section -->
         <div id="resultsSection" class="results-section">
-            <!-- Food Information Card -->
             <div class="result-card">
                 <h2 class="card-title">
                     <span class="card-icon">🍎</span>
                     Food Information
                 </h2>
-                <h3 class="food-name" id="foodName">Apple (Seb)</h3>
-                <span class="food-category" id="foodCategory">🌱 Vegetarian • Raw</span>
-                <p class="food-description" id="foodDescription">
-                    Apple ek popular fruit hai jo India me commonly khaya jata hai. Ye fresh, juicy aur sweet hota hai. "An apple a day keeps the doctor away" - ye famous saying hai.
-                </p>
+                <h3 class="food-name" id="foodName">Loading...</h3>
+                <span class="food-category" id="foodCategory">...</span>
+                <p class="food-description" id="foodDescription">...</p>
             </div>
 
-            <!-- Nutrition Information Card -->
             <div class="result-card">
                 <h2 class="card-title">
                     <span class="card-icon">📊</span>
                     Nutrition Facts (per 100g)
                 </h2>
-                <div class="nutrition-grid" id="nutritionGrid">
-                    <!-- Dynamically populated -->
-                </div>
+                <div class="nutrition-grid" id="nutritionGrid"></div>
             </div>
 
-            <!-- Health Benefits Card -->
             <div class="result-card">
                 <h2 class="card-title">
                     <span class="card-icon">💪</span>
                     Health Benefits (Fayde)
                 </h2>
-                <div class="benefits-list" id="benefitsList">
-                    <!-- Dynamically populated -->
-                </div>
+                <div class="benefits-list" id="benefitsList"></div>
             </div>
 
-            <!-- Health Risks Card -->
             <div class="result-card">
                 <h2 class="card-title">
                     <span class="card-icon">⚠️</span>
                     Health Risks (Nuksan)
                 </h2>
-                <div class="benefits-list" id="risksList">
-                    <!-- Dynamically populated -->
-                </div>
+                <div class="benefits-list" id="risksList"></div>
             </div>
 
-            <!-- Recommendations Card -->
             <div class="result-card">
                 <h2 class="card-title">
                     <span class="card-icon">👥</span>
@@ -758,28 +717,22 @@
                 <div class="recommendation-grid">
                     <div class="recommendation-box good-for">
                         <div class="recommendation-title">✅ Good For</div>
-                        <div class="recommendation-list" id="goodForList">
-                            <!-- Dynamically populated -->
-                        </div>
+                        <div class="recommendation-list" id="goodForList"></div>
                     </div>
                     <div class="recommendation-box avoid-for">
                         <div class="recommendation-title">❌ Avoid For</div>
-                        <div class="recommendation-list" id="avoidForList">
-                            <!-- Dynamically populated -->
-                        </div>
+                        <div class="recommendation-list" id="avoidForList"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Disclaimer -->
             <div class="disclaimer">
                 <span class="disclaimer-icon">⚕️</span>
                 <div class="disclaimer-text">
-                    <strong>Disclaimer:</strong> This app provides general nutrition information only. It is not medical advice. Please consult a healthcare professional for personalized dietary guidance.
+                    <strong>Disclaimer:</strong> This app provides general nutrition information powered by AI. It is not medical advice. Please consult a healthcare professional for personalized dietary guidance.
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="action-buttons">
                 <button class="action-button scan-another" onclick="scanAnother()">
                     📸 Scan Another
@@ -792,311 +745,24 @@
     </div>
 
     <script>
-        // ===========================
-        // 🎯 GLOBAL VARIABLES
-        // ===========================
+        // ============================================================
+        // 🔐 ANTHROPIC API CONFIGURATION
+        // ============================================================
+        // ⚠️ IMPORTANT: Replace with YOUR actual API key
+        // Get it from: https://console.anthropic.com/
+       
+        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
+        // Verify API key is set
+        if (!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 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) {
+            console.warn('⚠️ API key not set. Please add your Anthropic API key.');
+        }
+
         let currentImage = null;
+        let currentImageBase64 = null;
 
-        // ===========================
-        // 🤖 AI FOOD DATABASE
-        // ===========================
-        // This is a simulated AI database with extensive food information
-        // In a real app, this would be connected to an actual AI API like Claude Vision or GPT-4 Vision
-        
-        const foodDatabase = {
-            'apple': {
-                name: 'Apple (Seb)',
-                hindi: 'सेब',
-                category: '🌱 Vegetarian • Raw Fruit',
-                description: 'Apple ek popular fruit hai jo India me commonly khaya jata hai. Ye fresh, juicy aur sweet hota hai. "An apple a day keeps the doctor away" - ye famous saying hai kyunki apple bohot nutritious hota hai.',
-                nutrition: {
-                    'Calories': '52 kcal',
-                    'Protein': '0.3 g',
-                    'Carbs': '14 g',
-                    'Fiber': '2.4 g',
-                    'Fat': '0.2 g',
-                    'Vitamin C': '4.6 mg',
-                    'Potassium': '107 mg',
-                    'Calcium': '6 mg'
-                },
-                benefits: [
-                    '💓 Heart ke liye bahut accha - cholesterol kam karta hai',
-                    '🧠 Brain function improve karta hai - memory boost',
-                    '🦷 Teeth ko clean karta hai - natural toothbrush',
-                    '⚖️ Weight loss me madad - fiber se pet bharega',
-                    '🍃 Digestion improve - constipation door kare',
-                    '💪 Immunity boost - Vitamin C se'
-                ],
-                risks: [
-                    '⚠️ Zyada khane se pet me gas ho sakti hai',
-                    '🦷 Seeds me cyanide hota hai - beej mat khao',
-                    '😷 Kuch logo ko allergy ho sakti hai',
-                    '💊 Diabetes patients moderation me khaye'
-                ],
-                goodFor: [
-                    'Weight Loss',
-                    'Heart Health',
-                    'Students (Brain)',
-                    'General Health',
-                    'Kids Growth'
-                ],
-                avoidFor: [
-                    'Apple Allergy',
-                    'Severe IBS',
-                    'Excess Consumption'
-                ]
-            },
-            'banana': {
-                name: 'Banana (Kela)',
-                hindi: 'केला',
-                category: '🌱 Vegetarian • Raw Fruit',
-                description: 'Banana India ka sabse common fruit hai. Ye energy ka best source hai aur athletes ke liye perfect hai. Ripe banana meetha hota hai aur raw banana cooking me use hota hai.',
-                nutrition: {
-                    'Calories': '89 kcal',
-                    'Protein': '1.1 g',
-                    'Carbs': '23 g',
-                    'Fiber': '2.6 g',
-                    'Fat': '0.3 g',
-                    'Potassium': '358 mg',
-                    'Vitamin B6': '0.4 mg',
-                    'Magnesium': '27 mg'
-                },
-                benefits: [
-                    '⚡ Instant energy boost - sports ke liye perfect',
-                    '💪 Muscle cramps rokta hai - potassium se',
-                    '😊 Mood improve - serotonin boost',
-                    '🏃 Athletes ke liye best pre/post workout',
-                    '💤 Better sleep - tryptophan se',
-                    '🍃 Digestion me help - fiber'
-                ],
-                risks: [
-                    '⚠️ Diabetes patients limit kare - sugar zyada',
-                    '🦷 Teeth ke liye chewing gum jaisa - stick karta hai',
-                    '😴 Too much se weight gain',
-                    '💊 Kidney problems me avoid kare - potassium high'
-                ],
-                goodFor: [
-                    'Athletes',
-                    'Weight Gain',
-                    'Energy Boost',
-                    'Kids',
-                    'Muscle Building'
-                ],
-                avoidFor: [
-                    'Diabetes (limit)',
-                    'Kidney Disease',
-                    'Weight Loss Goal'
-                ]
-            },
-            'tomato': {
-                name: 'Tomato (Tamatar)',
-                hindi: 'टमाटर',
-                category: '🌱 Vegetarian • Raw/Cooked Vegetable',
-                description: 'Tomato technically ek fruit hai par vegetable ki tarah use hota hai. India me har sabzi me dal sakte hai. Raw salad me ya cooked curry me - dono me tasty.',
-                nutrition: {
-                    'Calories': '18 kcal',
-                    'Protein': '0.9 g',
-                    'Carbs': '3.9 g',
-                    'Fiber': '1.2 g',
-                    'Fat': '0.2 g',
-                    'Vitamin C': '14 mg',
-                    'Lycopene': 'High',
-                    'Potassium': '237 mg'
-                },
-                benefits: [
-                    '❤️ Heart disease ka risk kam - lycopene se',
-                    '👀 Eyes ke liye accha - Vitamin A',
-                    '☀️ Skin protection from sun - lycopene',
-                    '🎗️ Cancer prevention - antioxidants',
-                    '💧 Hydration - 95% water',
-                    '💪 Weight loss friendly - low calorie'
-                ],
-                risks: [
-                    '⚠️ Acidity badha sakta hai - empty stomach avoid',
-                    '🦴 Kidney stones ka risk - oxalate',
-                    '😷 Allergy possible - skin rashes',
-                    '💊 Arthritis me kuch logo ko problem'
-                ],
-                goodFor: [
-                    'Heart Health',
-                    'Weight Loss',
-                    'Skin Health',
-                    'Eye Health',
-                    'Cancer Prevention'
-                ],
-                avoidFor: [
-                    'Acidity Issues',
-                    'Kidney Stones',
-                    'GERD',
-                    'Tomato Allergy'
-                ]
-            },
-            'spinach': {
-                name: 'Spinach (Palak)',
-                hindi: 'पालक',
-                category: '🌱 Vegetarian • Leafy Green',
-                description: 'Palak ek superfood hai - iron ka best source. Popeye cartoon me dikhaya gaya hai ki palak khane se strength aati hai. Ye sach bhi hai!',
-                nutrition: {
-                    'Calories': '23 kcal',
-                    'Protein': '2.9 g',
-                    'Carbs': '3.6 g',
-                    'Fiber': '2.2 g',
-                    'Fat': '0.4 g',
-                    'Iron': '2.7 mg',
-                    'Calcium': '99 mg',
-                    'Vitamin K': '483 mcg'
-                },
-                benefits: [
-                    '💪 Muscle growth - protein aur iron',
-                    '🩸 Blood me oxygen improve - iron',
-                    '👀 Eye health - lutein aur zeaxanthin',
-                    '🦴 Bone strength - calcium aur Vitamin K',
-                    '🧠 Brain function boost',
-                    '💚 Detoxification - chlorophyll'
-                ],
-                risks: [
-                    '⚠️ Kidney stones risk - oxalate high',
-                    '💊 Blood thinning meds se react - Vitamin K',
-                    '🦷 Teeth pe film - oxalic acid',
-                    '😷 Raw palak me bacteria - cook karo'
-                ],
-                goodFor: [
-                    'Anemia',
-                    'Muscle Building',
-                    'Bone Health',
-                    'Eye Health',
-                    'Pregnancy'
-                ],
-                avoidFor: [
-                    'Kidney Stones',
-                    'Blood Thinners',
-                    'Thyroid Issues'
-                ]
-            },
-            'rice': {
-                name: 'Rice (Chawal)',
-                hindi: 'चावल',
-                category: '🌾 Vegetarian • Grain/Staple',
-                description: 'Rice India ka main food hai. White rice aur brown rice dono milte hai. South India me rice bohot zyada khaya jata hai. Energy ka best source hai.',
-                nutrition: {
-                    'Calories': '130 kcal',
-                    'Protein': '2.7 g',
-                    'Carbs': '28 g',
-                    'Fiber': '0.4 g',
-                    'Fat': '0.3 g',
-                    'Iron': '0.2 mg',
-                    'Magnesium': '12 mg',
-                    'B Vitamins': 'Good'
-                },
-                benefits: [
-                    '⚡ Quick energy source - carbs',
-                    '😊 Gluten-free - celiac patients ke liye safe',
-                    '🍃 Easy to digest - stomach ke liye light',
-                    '💪 Post-workout recovery',
-                    '🧠 Brain fuel - glucose',
-                    '💰 Affordable aur filling'
-                ],
-                risks: [
-                    '⚠️ Diabetes risk - high glycemic index',
-                    '⚖️ Weight gain agar zyada khao',
-                    '🌾 Brown rice better - white rice me fiber kam',
-                    '💊 Arsenic traces - dhoke achhe se'
-                ],
-                goodFor: [
-                    'Athletes',
-                    'Weight Gain',
-                    'Quick Energy',
-                    'Celiac Disease',
-                    'Kids'
-                ],
-                avoidFor: [
-                    'Diabetes (limit)',
-                    'Weight Loss',
-                    'Low-Carb Diet'
-                ]
-            },
-            'chicken': {
-                name: 'Chicken (Murgi)',
-                hindi: 'मुर्गी',
-                category: '🍗 Non-Vegetarian • Poultry',
-                description: 'Chicken India me sabse popular non-veg food hai. Protein ka excellent source hai. Gym jaane wale log bohot khate hai muscle building ke liye.',
-                nutrition: {
-                    'Calories': '165 kcal',
-                    'Protein': '31 g',
-                    'Carbs': '0 g',
-                    'Fiber': '0 g',
-                    'Fat': '3.6 g',
-                    'Iron': '0.9 mg',
-                    'Vitamin B6': '0.5 mg',
-                    'Niacin': '8.2 mg'
-                },
-                benefits: [
-                    '💪 Muscle building - high protein',
-                    '⚖️ Weight loss friendly - lean meat',
-                    '🦴 Bone strength - phosphorus',
-                    '😊 Mood boost - tryptophan',
-                    '❤️ Heart health - omega-3 (in moderation)',
-                    '🧠 Brain development'
-                ],
-                risks: [
-                    '⚠️ Salmonella infection - raw chicken danger',
-                    '🔥 Fried chicken unhealthy - oil zyada',
-                    '💊 Antibiotics residue - organic choose karo',
-                    '🧂 Processed chicken me sodium high'
-                ],
-                goodFor: [
-                    'Muscle Building',
-                    'Weight Loss',
-                    'Protein Needs',
-                    'Athletes',
-                    'Growing Kids'
-                ],
-                avoidFor: [
-                    'Vegetarians',
-                    'Chicken Allergy',
-                    'Gout (limit)'
-                ]
-            },
-            'default': {
-                name: 'Unknown Food Item',
-                hindi: 'अज्ञात खाद्य पदार्थ',
-                category: '❓ Unknown',
-                description: 'Ye food item hamari database me nahi hai, par hum kuch general nutrition info provide kar sakte hai. Better results ke liye clear photo upload kare.',
-                nutrition: {
-                    'Calories': 'Variable',
-                    'Protein': 'Check label',
-                    'Carbs': 'Check label',
-                    'Fiber': 'Variable',
-                    'Fat': 'Variable',
-                    'Vitamins': 'Variable',
-                    'Minerals': 'Variable'
-                },
-                benefits: [
-                    '🥗 Fresh food usually healthy hota hai',
-                    '🌈 Colorful foods me nutrients zyada',
-                    '💧 Hydrating foods body ke liye acche',
-                    '🍃 Natural foods processed se better'
-                ],
-                risks: [
-                    '⚠️ Moderation me khana important',
-                    '😷 Allergies check karo',
-                    '💊 Medicine interactions possible',
-                    '🔍 Unknown foods ko research karo'
-                ],
-                goodFor: [
-                    'Varied Diet',
-                    'Exploration'
-                ],
-                avoidFor: [
-                    'Allergies',
-                    'Medical Conditions'
-                ]
-            }
-        };
-
-        // ===========================
+        // ============================================================
         // 📸 CAMERA & FILE FUNCTIONS
-        // ===========================
+        // ============================================================
         
         function openCamera() {
             document.getElementById('cameraInput').click();
@@ -1113,13 +779,11 @@
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
+                    currentImageBase64 = e.target.result.split(',')[1]; // Get base64 without prefix
                     document.getElementById('previewImage').src = e.target.result;
                     
-                    // Hide scan section, show preview
                     document.getElementById('scanSection').style.display = 'none';
                     document.getElementById('previewSection').style.display = 'block';
-                    
-                    // Scroll to preview
                     document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
                 };
                 
@@ -1127,41 +791,123 @@
             }
         }
 
-        // ===========================
-        // 🤖 AI IMAGE ANALYSIS
-        // ===========================
+        // ============================================================
+        // 🤖 CLAUDE VISION API INTEGRATION
+        // ============================================================
+        
+        async function analyzeWithClaudeVision(base64Image) {
+            const apiUrl = 'https://api.anthropic.com/v1/messages';
+            
+            // Determine image type from currentImage
+            const imageType = currentImage.type || 'image/jpeg';
+            
+            const requestBody = {
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 2048,
+                messages: [{
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'image',
+                            source: {
+                                type: 'base64',
+                                media_type: imageType,
+                                data: base64Image
+                            }
+                        },
+                        {
+                            type: 'text',
+                            text: `You are a nutrition expert AI. Analyze this food image and provide DETAILED nutrition information in JSON format.
+
+CRITICAL: Identify the EXACT food item in the image. Be specific - if it's a green chili, say "Green Chili (Hari Mirch)", not "Banana" or "Chicken".
+
+Return ONLY a JSON object with this structure (no markdown, no backticks):
+{
+  "foodName": "Exact food name in English (Hindi name)",
+  "category": "Vegetarian/Non-Vegetarian • Raw/Cooked • Type",
+  "description": "Brief description in Hinglish (Hindi+English mix). Explain what it is and how it's commonly used in India. 2-3 sentences.",
+  "nutrition": {
+    "Calories": "XX kcal",
+    "Protein": "X g",
+    "Carbs": "X g",
+    "Fiber": "X g",
+    "Fat": "X g",
+    "Vitamin C": "X mg",
+    "Iron": "X mg",
+    "Calcium": "X mg"
+  },
+  "benefits": [
+    "💚 Benefit 1 in Hinglish with emoji",
+    "💪 Benefit 2 in Hinglish with emoji",
+    "🧠 Benefit 3 in Hinglish with emoji",
+    "❤️ Benefit 4 in Hinglish with emoji",
+    "✨ Benefit 5 in Hinglish with emoji"
+  ],
+  "risks": [
+    "⚠️ Risk 1 in Hinglish with emoji",
+    "🚫 Risk 2 in Hinglish with emoji",
+    "💊 Risk 3 in Hinglish with emoji"
+  ],
+  "goodFor": ["Category 1", "Category 2", "Category 3"],
+  "avoidFor": ["Category 1", "Category 2"]
+}
+
+Make sure nutrition values are accurate for this specific food. Be precise and helpful.`
+                        }
+                    ]
+                }]
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': ANTHROPIC_API_KEY,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                const aiResponse = data.content[0].text;
+                
+                // Parse JSON response
+                const foodData = JSON.parse(aiResponse);
+                return foodData;
+                
+            } catch (error) {
+                console.error('Claude Vision API Error:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
+        // 📊 ANALYZE IMAGE FUNCTION
+        // ============================================================
         
         function analyzeImage() {
-            // Hide preview, show loading
             document.getElementById('previewSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
 
-            // ============================================================
-            // 📌 AD PLACEMENT #2 — INTERSTITIAL AD (Before AI analysis)
-            // ─────────────────────────────────────────────────────────────
-            // • Type    : Interstitial (full-screen)
-            // • Trigger : User clicks "Analyze Karo" button
-            // • WHY HERE: Natural break point — user action hai,
-            //   loading wait kar raha hai → perfect interstitial moment
-            // • beforeAd  → Ad dikhane se pehle UI pause
-            // • afterAd   → Ad band ho jaane ke baad AI processing shuru
-            // ============================================================
+            // Interstitial Ad
             adBreak({
                 type: 'next',
                 name: 'before-analysis',
                 beforeAd: function() {
-                    // Loading already visible, user ko pata hai ki processing ho raha hai
                     document.getElementById('loadingSection').querySelector('.loading-text').textContent = '⏳ Ek second...';
                 },
                 afterAd: function() {
-                    // Ad band — ab actual AI processing shuru
-                    document.getElementById('loadingSection').querySelector('.loading-text').textContent = 'AI se analyze ho raha hai... 🤖';
-                    runAIAnalysis(); // Actual processing function
+                    document.getElementById('loadingSection').querySelector('.loading-text').textContent = 'Claude AI analyzing... 🤖';
+                    runAIAnalysis();
                 }
             });
 
-            // Fallback: Agar ad nahi dika (no suitable ad), toh directly run karo
-            // AdBreak afterAd call nahi karta agar ad nahi dika → timeout se handle
             setTimeout(function() {
                 if (document.getElementById('loadingSection').style.display === 'block' &&
                     document.getElementById('resultsSection').style.display !== 'block') {
@@ -1170,118 +916,106 @@
             }, 3500);
         }
 
-        // ============================================================
-        // 🤖 Actual AI Processing (Interstitial ke baad chalega)
-        // ============================================================
-        function runAIAnalysis() {
-            // Simulated AI processing delay (real app me API call hogi yahan)
-            setTimeout(() => {
-                const recognizedFood = simulateAIRecognition();
-                displayResults(recognizedFood);
+        async function runAIAnalysis() {
+            try {
+                if (!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'YOUR_ANTHROPIC_API_KEY_HERE') {
+                    throw new Error('API key not configured');
+                }
+
+                const foodData = await analyzeWithClaudeVision(currentImageBase64);
+                displayResults(foodData);
 
                 document.getElementById('loadingSection').style.display = 'none';
                 document.getElementById('resultsSection').style.display = 'block';
                 document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-            }, 2000);
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                
+                // Show error message
+                document.getElementById('loadingSection').innerHTML = `
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
+                        <h3 style="color: var(--danger); margin-bottom: 10px;">Error</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                            ${error.message.includes('API key') ? 
+                                '⚙️ Please configure your Anthropic API key in the code.' : 
+                                '🔌 Could not connect to Claude AI. Check your API key and internet connection.'}
+                        </p>
+                        <button onclick="goToScanPage()" style="
+                            padding: 12px 24px; background: var(--primary-green);
+                            border: none; border-radius: 10px; color: white;
+                            font-weight: 700; cursor: pointer;
+                        ">Try Again</button>
+                    </div>
+                `;
+            }
         }
 
-        // ===========================
-        // 🎯 AI RECOGNITION SIMULATOR
-        // ===========================
-        
-        function simulateAIRecognition() {
-            // In a real app, this would use:
-            // 1. Claude Vision API
-            // 2. GPT-4 Vision API
-            // 3. Google Vision AI
-            // 4. Custom trained model
-            
-            // For demo, we'll randomly select or use keywords
-            const foods = Object.keys(foodDatabase).filter(key => key !== 'default');
-            
-            // Random selection for demo (in production, use actual AI)
-            const randomFood = foods[Math.floor(Math.random() * foods.length)];
-            
-            return randomFood;
-        }
-
-        // ===========================
+        // ============================================================
         // 📊 DISPLAY RESULTS
-        // ===========================
+        // ============================================================
         
-        function displayResults(foodKey) {
-            const food = foodDatabase[foodKey] || foodDatabase['default'];
+        function displayResults(food) {
+            document.getElementById('foodName').textContent = food.foodName || 'Unknown Food';
+            document.getElementById('foodCategory').innerHTML = food.category || '❓ Unknown';
+            document.getElementById('foodDescription').textContent = food.description || 'No description available.';
             
-            // Update food information
-            document.getElementById('foodName').textContent = food.name;
-            document.getElementById('foodCategory').innerHTML = food.category;
-            document.getElementById('foodDescription').textContent = food.description;
-            
-            // Update nutrition grid
+            // Nutrition grid
             const nutritionGrid = document.getElementById('nutritionGrid');
             nutritionGrid.innerHTML = '';
-            Object.entries(food.nutrition).forEach(([key, value]) => {
-                nutritionGrid.innerHTML += `
-                    <div class="nutrition-item">
-                        <div class="nutrition-label">${key}</div>
-                        <div class="nutrition-value">${value}</div>
-                    </div>
-                `;
-            });
+            if (food.nutrition) {
+                Object.entries(food.nutrition).forEach(([key, value]) => {
+                    nutritionGrid.innerHTML += `
+                        <div class="nutrition-item">
+                            <div class="nutrition-label">${key}</div>
+                            <div class="nutrition-value">${value}</div>
+                        </div>
+                    `;
+                });
+            }
             
-            // Update benefits list
+            // Benefits
             const benefitsList = document.getElementById('benefitsList');
             benefitsList.innerHTML = '';
-            food.benefits.forEach(benefit => {
-                benefitsList.innerHTML += `
-                    <div class="benefit-item">
-                        <span class="benefit-icon">✅</span>
-                        <span class="benefit-text">${benefit}</span>
-                    </div>
-                `;
-            });
+            if (food.benefits) {
+                food.benefits.forEach(benefit => {
+                    benefitsList.innerHTML += `
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✅</span>
+                            <span class="benefit-text">${benefit}</span>
+                        </div>
+                    `;
+                });
+            }
             
-            // Update risks list
+            // Risks
             const risksList = document.getElementById('risksList');
             risksList.innerHTML = '';
-            food.risks.forEach(risk => {
-                risksList.innerHTML += `
-                    <div class="risk-item">
-                        <span class="benefit-icon">⚠️</span>
-                        <span class="benefit-text">${risk}</span>
-                    </div>
-                `;
-            });
+            if (food.risks) {
+                food.risks.forEach(risk => {
+                    risksList.innerHTML += `
+                        <div class="risk-item">
+                            <span class="benefit-icon">⚠️</span>
+                            <span class="benefit-text">${risk}</span>
+                        </div>
+                    `;
+                });
+            }
             
-            // Update recommendations
-            document.getElementById('goodForList').innerHTML = food.goodFor.map(item => 
-                `<div>• ${item}</div>`
-            ).join('');
+            // Recommendations
+            document.getElementById('goodForList').innerHTML = food.goodFor ? 
+                food.goodFor.map(item => `<div>• ${item}</div>`).join('') : '';
             
-            document.getElementById('avoidForList').innerHTML = food.avoidFor.map(item => 
-                `<div>• ${item}</div>`
-            ).join('');
+            document.getElementById('avoidForList').innerHTML = food.avoidFor ? 
+                food.avoidFor.map(item => `<div>• ${item}</div>`).join('') : '';
         }
 
-        // ===========================
+        // ============================================================
         // 🔄 ACTION FUNCTIONS
-        // ===========================
+        // ============================================================
         
         function scanAnother() {
-            // ============================================================
-            // 📌 AD PLACEMENT #3 — REWARDED AD (Before scanning again)
-            // ─────────────────────────────────────────────────────────────
-            // • Type    : Rewarded (user choice — watch ad voluntarily)
-            // • Trigger : User clicks "Scan Another" button
-            // • WHY HERE: User results dekh chuka hai, ab new scan chahiye
-            //   → Rewarded ad offer karo. Agar watch kiya toh bonus info
-            //     milega. Agar skip kiya toh directly scan page.
-            // • beforeReward → Ad available hai toh "Watch Ad" button dikao
-            // • adViewed     → Bonus reward diya
-            // • adDismissed  → Directly scan page pe jaao
-            // ============================================================
-
-            // Rewarded ad button show karne ke liye ek temporary overlay
             const rewardBanner = document.createElement('div');
             rewardBanner.id = 'rewardBanner';
             rewardBanner.style.cssText = `
@@ -1320,49 +1054,40 @@
             let showRewardedAdFn = null;
             let adWasTriggered = false;
 
-            // Skip button → directly scan page
             document.getElementById('skipAdBtn').addEventListener('click', function() {
                 rewardBanner.remove();
                 goToScanPage();
             });
 
-            // Watch Ad button → call showAdFn (only active if ad is available)
             document.getElementById('watchAdBtn').addEventListener('click', function() {
                 if (showRewardedAdFn) {
                     adWasTriggered = true;
                     showRewardedAdFn();
                 } else {
-                    // Ad not ready yet, go directly
                     rewardBanner.remove();
                     goToScanPage();
                 }
             });
 
-            // adBreak call for rewarded ad
             adBreak({
                 type: 'reward',
                 name: 'scan-again-reward',
                 beforeReward: function(showAdFn) {
-                    // Ad available hai — showAdFn store karo
                     showRewardedAdFn = showAdFn;
                 },
                 beforeAd: function() {
-                    // Ad dikhane se pehle banner hide karo
                     rewardBanner.style.display = 'none';
                 },
                 adDismissed: function() {
-                    // User ne ad skip kiya → bonus nahi milega, scan page pe jaao
                     rewardBanner.remove();
                     goToScanPage();
                 },
                 adViewed: function() {
-                    // ✅ Ad poori dekha → bonus reward
                     rewardBanner.remove();
                     alert('🎉 Bonus! Aapko next scan me extra detail milegi. Thanks for watching!');
                     goToScanPage();
                 },
                 afterAd: function() {
-                    // Ad overlay band — agar banner abhi hai toh hatao
                     if (document.getElementById('rewardBanner')) {
                         rewardBanner.remove();
                         goToScanPage();
@@ -1370,8 +1095,6 @@
                 }
             });
 
-            // Fallback: Agar adBreak ne beforeReward nahi call kiya
-            // (matlab koi suitable ad nahi tha), toh 2s baad auto-skip
             setTimeout(function() {
                 if (document.getElementById('rewardBanner') && !adWasTriggered) {
                     rewardBanner.remove();
@@ -1380,30 +1103,23 @@
             }, 2500);
         }
 
-        // ============================================================
-        // 🔄 Scan Page Pe Jaao (Reset logic)
-        // ============================================================
         function goToScanPage() {
             currentImage = null;
+            currentImageBase64 = null;
             document.getElementById('fileInput').value = '';
             document.getElementById('cameraInput').value = '';
             
-            // Show scan section, hide others
             document.getElementById('scanSection').style.display = 'block';
             document.getElementById('previewSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'none';
             document.getElementById('resultsSection').style.display = 'none';
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function shareResults() {
             const foodName = document.getElementById('foodName').textContent;
-            const shareText = `🥗 NutriScan Results:\n\n` +
-                            `Food: ${foodName}\n\n` +
-                            `Check out this amazing food analysis app! 📊\n` +
-                            `#NutriScan #HealthyEating #Nutrition`;
+            const shareText = `🥗 NutriScan AI Results:\n\nFood: ${foodName}\n\nPowered by Claude Vision AI 🤖\n#NutriScan #HealthyEating #Nutrition`;
             
             if (navigator.share) {
                 navigator.share({
@@ -1411,40 +1127,25 @@
                     text: shareText
                 }).catch(err => console.log('Share cancelled'));
             } else {
-                // Fallback - copy to clipboard
                 navigator.clipboard.writeText(shareText).then(() => {
                     alert('Results copied to clipboard! 📋');
                 });
             }
         }
 
-        // ===========================
-        // 🌙 DARK MODE TOGGLE
-        // ===========================
-        
         function toggleDarkMode() {
             const body = document.body;
             const modeIcon = document.getElementById('modeIcon');
             
             body.classList.toggle('light-mode');
-            
-            if (body.classList.contains('light-mode')) {
-                modeIcon.textContent = '☀️';
-            } else {
-                modeIcon.textContent = '🌙';
-            }
+            modeIcon.textContent = body.classList.contains('light-mode') ? '☀️' : '🌙';
         }
 
-        // ===========================
+        // ============================================================
         // 🎬 INITIALIZATION
-        // ===========================
+        // ============================================================
         
-        // Add some entrance animations
         window.addEventListener('load', () => {
-            // ============================================================
-            // ✅ STEP 3: adConfig() — App configuration Google ko batao
-            // Google ko batao ki app me sound hai ya nahi etc.
-            // ============================================================
             adConfig({ sound: 'off' });
 
             document.querySelector('.container').style.opacity = '0';

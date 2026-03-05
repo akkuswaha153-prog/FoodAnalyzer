@@ -1,1 +1,929 @@
-herea
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2ecc71">
+<meta name="description" content="AI Food Nutrition Scanner - Scan food and get instant nutrition information powered by AI. Educational tool for health-conscious users.">
+<meta name="keywords" content="food nutrition, calorie counter, health app, AI food scanner, diet tracker">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="AI Food Nutrition Scanner">
+<meta property="og:description" content="Scan food items and get instant AI-powered nutrition insights">
+<meta property="og:type" content="website">
+<title>AI Food Nutrition Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--primary:#2ecc71;--secondary:#27ae60;--bg:#f4fff7;--card:#ffffff;--text:#1a2e1a;--text-light:#5a7a5a;--shadow:0 4px 20px rgba(46,204,113,0.15);--shadow-lg:0 8px 40px rgba(46,204,113,0.2);--radius:16px;--radius-sm:10px;--nav-height:70px;--transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+[data-theme="dark"]{--bg:#0d1f0d;--card:#1a2e1a;--text:#e8f5e9;--text-light:#a5c8a5;--shadow:0 4px 20px rgba(0,0,0,0.4);--shadow-lg:0 8px 40px rgba(0,0,0,0.5)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;overflow-x:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);transition:var(--transition)}
+#splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#27ae60,#2ecc71,#82e0aa);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:splashFadeOut 0.5s ease 2.5s forwards}
+.splash-logo{font-size:80px;animation:logoBounce 1s ease infinite alternate}
+.splash-title{font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;color:#fff;margin-top:16px;letter-spacing:-0.5px}
+.splash-sub{color:rgba(255,255,255,0.85);font-size:13px;margin-top:6px;font-weight:500}
+.splash-loader{margin-top:40px;width:200px;height:4px;background:rgba(255,255,255,0.3);border-radius:99px;overflow:hidden}
+.splash-loader-bar{height:100%;width:0;background:#fff;border-radius:99px;animation:loaderFill 2.3s ease forwards}
+.splash-version{position:absolute;bottom:30px;color:rgba(255,255,255,0.6);font-size:12px}
+@keyframes logoBounce{from{transform:translateY(0) scale(1)}to{transform:translateY(-10px) scale(1.05)}}
+@keyframes loaderFill{to{width:100%}}
+@keyframes splashFadeOut{to{opacity:0;pointer-events:none;visibility:hidden}}
+#app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;opacity:0;animation:appFadeIn 0.6s ease 2.8s forwards}
+@keyframes appFadeIn{to{opacity:1}}
+.topbar{position:sticky;top:0;z-index:100;background:var(--card);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(46,204,113,0.1)}
+.topbar-logo{display:flex;align-items:center;gap:10px}
+.topbar-logo span:first-child{font-size:26px}
+.app-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--primary);line-height:1.1}
+.app-ver{font-size:10px;color:var(--text-light);font-weight:500}
+.topbar-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:none;background:var(--bg);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:var(--transition)}
+.icon-btn:hover{background:var(--primary);color:#fff;transform:scale(1.1)}
+.lang-badge{padding:4px 10px;border-radius:99px;border:1.5px solid var(--primary);background:transparent;color:var(--primary);font-size:11px;font-weight:700;cursor:pointer;transition:var(--transition)}
+.lang-badge:hover,.lang-badge.active{background:var(--primary);color:#fff}
+.page{display:none;padding:16px 16px calc(var(--nav-height) + 16px);animation:pageSlide 0.3s ease}
+.page.active{display:block}
+@keyframes pageSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.static-page{padding:20px 16px calc(var(--nav-height) + 20px);display:none;animation:pageSlide 0.3s ease}
+.static-page.active{display:block}
+.hero-card{background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:20px;padding:24px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden}
+.hero-card::before{content:'🍎';position:absolute;right:-10px;top:-10px;font-size:100px;opacity:0.15;transform:rotate(15deg)}
+.hero-card h2{font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+.hero-card p{font-size:13px;opacity:0.9;line-height:1.5}
+.hero-disclaimer{margin-top:10px;font-size:10px;opacity:0.75;background:rgba(0,0,0,0.15);padding:6px 10px;border-radius:8px}
+.section-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;margin-bottom:14px;color:var(--text)}
+.scan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.scan-btn{background:var(--card);border-radius:var(--radius);padding:20px 16px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:var(--shadow);transition:var(--transition);text-decoration:none}
+.scan-btn:hover,.scan-btn:active{transform:translateY(-2px) scale(1.02);box-shadow:var(--shadow-lg)}
+.btn-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.btn-label{font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:var(--text)}
+.btn-sub{font-size:11px;color:var(--text-light)}
+.bg-green{background:linear-gradient(135deg,#d5f5e3,#a9dfbf)}
+.bg-blue{background:linear-gradient(135deg,#d6eaf8,#a9cce3)}
+.bg-orange{background:linear-gradient(135deg,#fdebd0,#f8c471)}
+.bg-purple{background:linear-gradient(135deg,#e8daef,#c39bd3)}
+.bg-red{background:linear-gradient(135deg,#fadbd8,#f1948a)}
+.bg-teal{background:linear-gradient(135deg,#d1f2eb,#76d7c4)}
+.tip-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:20px;border-left:4px solid var(--primary)}
+.tip-card .tip-head{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin-bottom:6px;color:var(--primary)}
+.tip-card p{font-size:13px;color:var(--text-light);line-height:1.5}
+.result-img{width:100%;border-radius:var(--radius);margin-bottom:16px;object-fit:cover;max-height:220px}
+.food-name-bar{background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:var(--radius);padding:16px 20px;color:#fff;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.food-name-bar h3{font-family:'Poppins',sans-serif;font-size:20px;font-weight:700}
+.food-emoji{font-size:36px}
+.confidence-badge{background:rgba(255,255,255,0.25);padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-top:4px;display:inline-block}
+.macro-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.macro-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);text-align:center;transition:var(--transition)}
+.macro-card:hover{transform:translateY(-2px)}
+.macro-icon{font-size:22px;margin-bottom:6px}
+.macro-val{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--primary)}
+.macro-unit{font-size:11px;font-weight:600;color:var(--text-light)}
+.macro-label{font-size:12px;color:var(--text-light);margin-top:2px}
+.calories-card{background:linear-gradient(135deg,#ff6b6b,#ff8e53);border-radius:var(--radius);padding:16px 20px;color:#fff;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.calories-card .cal-num{font-family:'Poppins',sans-serif;font-size:40px;font-weight:800;line-height:1}
+.calories-card .cal-sub{font-size:12px;opacity:0.85}
+.vitamin-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{padding:6px 12px;border-radius:99px;font-size:12px;font-weight:600}
+.chip-green{background:#d5f5e3;color:#1e8449}
+.chip-blue{background:#d6eaf8;color:#1a5276}
+.chip-orange{background:#fdebd0;color:#a04000}
+.chip-purple{background:#e8daef;color:#6c3483}
+.accordion{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.accordion-head{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:600;font-size:14px;transition:var(--transition)}
+.accordion-head:hover{background:var(--bg)}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease;padding:0 16px}
+.accordion-body.open{max-height:400px;padding-bottom:14px}
+.accordion-body ul{padding-left:16px}
+.accordion-body li{font-size:13px;color:var(--text-light);line-height:1.8}
+.benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.benefit-card{background:var(--card);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);text-align:center;transition:var(--transition);animation:fadeIn 0.5s ease both}
+.benefit-card:hover{transform:scale(1.03)}
+.b-icon{font-size:24px;margin-bottom:6px}
+.b-title{font-size:12px;font-weight:700;color:var(--text)}
+.b-desc{font-size:11px;color:var(--text-light);margin-top:2px}
+.goal-tabs{display:flex;gap:8px;margin-bottom:14px}
+.goal-tab{flex:1;padding:10px;border-radius:var(--radius-sm);border:2px solid transparent;background:var(--card);cursor:pointer;font-size:12px;font-weight:700;box-shadow:var(--shadow);transition:var(--transition);text-align:center;color:var(--text)}
+.goal-tab.active{border-color:var(--primary);background:var(--bg);color:var(--primary)}
+.goal-suggestion{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);font-size:13px;color:var(--text-light);line-height:1.6}
+.action-row{display:flex;gap:10px;margin-top:16px}
+.btn-primary{flex:1;padding:14px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.btn-secondary{flex:1;padding:14px;border-radius:var(--radius);border:2px solid var(--primary);background:transparent;color:var(--primary);font-weight:700;font-size:14px;cursor:pointer;transition:var(--transition)}
+.btn-secondary:hover{background:var(--primary);color:#fff}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text)}
+.form-input{width:100%;padding:14px 16px;border-radius:var(--radius-sm);border:2px solid #e0efe0;background:var(--card);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;transition:var(--transition)}
+.form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(46,204,113,0.15)}
+.bmi-result{border-radius:var(--radius);padding:24px;text-align:center;margin-top:16px;display:none;animation:fadeIn 0.4s ease}
+.bmi-num{font-family:'Poppins',sans-serif;font-size:56px;font-weight:800}
+.bmi-cat{font-size:16px;font-weight:700;margin-top:4px}
+.bmi-desc{font-size:13px;margin-top:8px;opacity:0.8}
+.bmi-scale{height:12px;border-radius:99px;margin-top:16px;background:linear-gradient(to right,#3498db,#2ecc71,#f39c12,#e74c3c);position:relative}
+.bmi-marker{position:absolute;top:-4px;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #333;transform:translateX(-50%);transition:left 0.8s ease}
+.protein-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:var(--card);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);text-align:center}
+.stat-val{font-family:'Poppins',sans-serif;font-size:28px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:12px;color:var(--text-light);margin-top:2px}
+.progress-container{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.progress-bar-wrap{background:#e0efe0;border-radius:99px;height:16px;overflow:hidden;margin:10px 0}
+.progress-bar-fill{height:100%;border-radius:99px;background:linear-gradient(to right,var(--primary),var(--secondary));transition:width 1s ease}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-light)}
+.protein-log{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.log-item{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg)}
+.log-item:last-child{border-bottom:none}
+.log-food{font-size:13px;font-weight:600;color:var(--text)}
+.log-time{font-size:11px;color:var(--text-light)}
+.log-protein{font-family:'Poppins',sans-serif;font-weight:700;color:var(--primary)}
+.history-item{background:var(--card);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;cursor:pointer;transition:var(--transition)}
+.history-item:hover{transform:translateX(4px);border-left:3px solid var(--primary)}
+.history-thumb{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.history-info{flex:1}
+.history-name{font-weight:700;font-size:14px;color:var(--text)}
+.history-cal{font-size:12px;color:var(--text-light);margin-top:2px}
+.history-time{font-size:11px;color:var(--text-light)}
+.history-cal-badge{background:linear-gradient(135deg,#ff6b6b,#ff8e53);color:#fff;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-light)}
+.empty-icon{font-size:60px;margin-bottom:16px;opacity:0.5}
+.page-header{text-align:center;margin-bottom:24px}
+.ph-icon{font-size:50px;margin-bottom:10px}
+.page-header h1{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--primary)}
+.page-header p{font-size:13px;color:var(--text-light);margin-top:4px}
+.info-section{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.info-section h3{font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:var(--primary);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.info-section p,.info-section li{font-size:13px;color:var(--text-light);line-height:1.7}
+.info-section ul{padding-left:16px}
+.contact-links{display:flex;flex-direction:column;gap:12px}
+.contact-link{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);text-decoration:none;color:var(--text);transition:var(--transition)}
+.contact-link:hover{transform:translateX(4px);color:var(--primary)}
+.cl-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0}
+.cl-label{font-size:12px;color:var(--text-light)}
+.cl-val{font-weight:600;font-size:14px}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nav-height);background:var(--card);border-top:1px solid rgba(46,204,113,0.15);display:flex;align-items:center;justify-content:space-around;padding:0 10px;z-index:100;box-shadow:0 -4px 20px rgba(46,204,113,0.1)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 12px;border-radius:12px;transition:var(--transition);border:none;background:none;color:var(--text-light);flex:1}
+.nav-item.active{color:var(--primary)}
+.nav-icon{font-size:20px;transition:var(--transition)}
+.nav-label{font-size:10px;font-weight:600}
+.nav-item.active .nav-icon{transform:translateY(-2px)}
+#loadingOverlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#loadingOverlay.show{display:flex}
+.loader-spinner{width:50px;height:50px;border:4px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite}
+.loader-text{color:#fff;font-weight:600;font-size:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.api-key-note{background:linear-gradient(135deg,#fff3cd,#ffeeba);border-radius:var(--radius-sm);padding:12px 14px;border-left:4px solid #ffc107;margin-bottom:14px}
+.api-key-note p{font-size:12px;color:#856404;line-height:1.5}
+.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:modalUp 0.3s ease}
+@keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-box h3{font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px}
+.config-info{font-size:13px;color:var(--text-light);line-height:1.6;margin-bottom:12px}
+.form-input-config{width:100%;padding:12px 14px;border-radius:var(--radius-sm);border:2px solid #e0efe0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;transition:var(--transition);margin-bottom:12px}
+.form-input-config:focus{outline:none;border-color:var(--primary)}
+/* AD PLACEHOLDERS */
+.ad-container{width:100%;border-radius:var(--radius-sm);overflow:hidden}.ad-container:empty{display:none}
+.ad-placeholder{display:none}
+
+
+#interstitialAd{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+#interstitialAd.show{display:flex}
+.inter-box{background:var(--card);border-radius:20px;width:100%;max-width:380px;overflow:hidden}
+.inter-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bg)}
+.inter-header span{font-size:12px;color:var(--text-light)}
+.inter-close{background:var(--bg);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.inter-content{min-height:200px;display:flex;align-items:center;justify-content:center}
+.inter-placeholder{display:none}
+.ip-icon{font-size:48px;margin-bottom:10px}
+.inter-countdown{text-align:center;padding:12px;font-size:13px;color:var(--text-light);border-top:1px solid var(--bg)}
+#exitPopup{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:20px}
+#exitPopup.show{display:flex}
+.exit-box{background:var(--card);border-radius:20px;width:100%;max-width:360px;padding:24px 20px;text-align:center}
+.exit-box h3{font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px}
+.exit-box p{font-size:13px;color:var(--text-light);margin-bottom:16px}
+.exit-btns{display:flex;gap:10px}
+.exit-btns button{flex:1;padding:12px;border-radius:var(--radius-sm);font-weight:700;cursor:pointer;font-size:13px}
+.btn-stay{background:var(--primary);color:#fff;border:none}
+.btn-exit{background:transparent;color:var(--text);border:2px solid var(--bg)}
+#snackbar{position:fixed;bottom:calc(var(--nav-height) + 16px);left:50%;transform:translateX(-50%) translateY(100px);z-index:600;background:#333;color:#fff;padding:12px 20px;border-radius:99px;font-size:13px;font-weight:500;transition:transform 0.3s ease;white-space:nowrap}
+#snackbar.show{transform:translateX(-50%) translateY(0)}
+#fileInput{display:none}
+@media(max-width:380px){.macro-val{font-size:18px}.bmi-num{font-size:44px}.scan-grid{gap:8px}.scan-btn{padding:16px 10px}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-logo">🥗</div>
+  <div class="splash-title">NutriScan AI</div>
+  <div class="splash-sub">AI Food Nutrition Scanner</div>
+  <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+  <div class="splash-version">v2.0.0 | Educational Purpose Only</div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="loader-spinner"></div>
+  <div class="loader-text" id="loadingText">Analyzing food with AI...</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <span>🥗</span>
+      <div><div class="app-name">NutriScan AI</div><div class="app-ver">v2.0.0</div></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="lang-badge" id="langToggle" onclick="toggleLang()">HI</button>
+      <button class="icon-btn" onclick="toggleDark()" id="darkBtn"><i class="fas fa-moon"></i></button>
+      <button class="icon-btn" onclick="showPage('settings-page')"><i class="fas fa-cog"></i></button>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div id="home-page" class="page active">
+    <!-- ============================================================
+         ADSTERA AD UNIT - HOME TOP BANNER
+         Paste your Adstera banner script inside this div below
+         ============================================================ -->
+    <div class="ad-container">
+      <div class="ad-placeholder"><span>Advertisement — Paste Adstera Banner Script Here</span></div>
+    </div>
+
+    <div class="hero-card">
+      <h2 data-t="heroTitle">🤖 AI Nutrition Scanner</h2>
+      <p data-t="heroDesc">Scan any food and get instant AI-powered nutrition analysis with detailed health insights</p>
+      <div class="hero-disclaimer" data-t="disclaimer">⚠️ Educational purpose only. Consult a nutritionist for medical advice.</div>
+    </div>
+
+
+    <div class="section-title" data-t="quickActions">Quick Actions</div>
+    <div class="scan-grid">
+      <button class="scan-btn" onclick="triggerCamera()">
+        <div class="btn-icon bg-green">📷</div>
+        <div class="btn-label" data-t="scanCamera">Scan Food</div>
+        <div class="btn-sub" data-t="useCamera">Use Camera</div>
+      </button>
+      <button class="scan-btn" onclick="triggerGallery()">
+        <div class="btn-icon bg-blue">🖼️</div>
+        <div class="btn-label" data-t="fromGallery">From Gallery</div>
+        <div class="btn-sub" data-t="pickImage">Pick Image</div>
+      </button>
+      <button class="scan-btn" onclick="showPage('bmi-page')">
+        <div class="btn-icon bg-orange">⚖️</div>
+        <div class="btn-label">BMI Calculator</div>
+        <div class="btn-sub">Check your BMI</div>
+      </button>
+      <button class="scan-btn" onclick="showPage('protein-page')">
+        <div class="btn-icon bg-purple">💪</div>
+        <div class="btn-label" data-t="proteinTrack">Protein Tracker</div>
+        <div class="btn-sub" data-t="dailyGoal">Daily Goal</div>
+      </button>
+      <button class="scan-btn" onclick="showPage('history-page')">
+        <div class="btn-icon bg-red">📋</div>
+        <div class="btn-label" data-t="scanHistory">Scan History</div>
+        <div class="btn-sub" data-t="lastScans">Last 10 Scans</div>
+      </button>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-head"><i class="fas fa-lightbulb"></i> <span data-t="tipTitle">Pro Tip</span></div>
+      <p data-t="tipText">Take clear, well-lit photos of food for more accurate AI analysis. Ensure the food item fills most of the frame.</p>
+    </div>
+
+    <!-- ============================================================
+         ADSTERA AD UNIT - HOME BOTTOM BANNER
+         Paste your Adstera banner script inside this div below
+         ============================================================ -->
+    <div class="ad-container">
+      <div class="ad-placeholder"><span>Advertisement — Paste Adstera Bottom Banner Here</span></div>
+    </div>
+  </div>
+
+  <!-- SCAN RESULT PAGE -->
+  <div id="result-page" class="page">
+    <div id="previewContainer" style="display:none;">
+      <img id="previewImg" class="result-img" src="" alt="Food">
+    </div>
+    <div id="resultContent" style="display:none;">
+      <div class="food-name-bar">
+        <div>
+          <div id="foodNameDisplay" style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:#fff;"></div>
+          <span class="confidence-badge" id="confidenceBadge">AI Detected</span>
+        </div>
+        <div id="foodEmojiDisplay" class="food-emoji">🍽️</div>
+      </div>
+      <div class="calories-card">
+        <div>
+          <div class="cal-sub" data-t="totalCalories">Total Calories</div>
+          <div class="cal-num" id="calDisplay">0</div>
+          <div class="cal-sub">kcal per 100g</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:40px;">🔥</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px;" id="calGrade">Moderate</div>
+        </div>
+      </div>
+      <div class="macro-grid">
+        <div class="macro-card"><div class="macro-icon">🥩</div><div class="macro-val" id="proteinDisplay">0</div><div class="macro-unit">grams</div><div class="macro-label">Protein</div></div>
+        <div class="macro-card"><div class="macro-icon">🍞</div><div class="macro-val" id="carbsDisplay">0</div><div class="macro-unit">grams</div><div class="macro-label">Carbs</div></div>
+        <div class="macro-card"><div class="macro-icon">🥑</div><div class="macro-val" id="fatDisplay">0</div><div class="macro-unit">grams</div><div class="macro-label">Total Fat</div></div>
+        <div class="macro-card"><div class="macro-icon">💧</div><div class="macro-val" id="fiberDisplay">0</div><div class="macro-unit">grams</div><div class="macro-label">Fiber</div></div>
+      </div>
+
+      <!-- ============================================================
+           ADSTERA AD UNIT - RESULT PAGE NATIVE AD
+           Paste your Adstera native/in-content ad script below
+           ============================================================ -->
+      <div class="ad-container">
+        <div class="ad-placeholder"><span>Sponsored — Paste Adstera Native Ad Script Here</span></div>
+      </div>
+
+      <div class="section-title">Vitamins &amp; Minerals</div>
+      <div id="vitaminChips" class="vitamin-chips"></div>
+      <div class="section-title">Health Benefits</div>
+      <div id="benefitsGrid" class="benefits-grid"></div>
+      <div class="accordion">
+        <div class="accordion-head" onclick="toggleAccordion('ingredientsAccBody')">
+          <span>🧪 Key Ingredients</span><i class="fas fa-chevron-down" id="ingredientsAccBodyIcon"></i>
+        </div>
+        <div class="accordion-body" id="ingredientsAccBody"><ul id="ingredientsList"></ul></div>
+      </div>
+      <div class="accordion">
+        <div class="accordion-head" onclick="toggleAccordion('sideEffectsAccBody')">
+          <span>⚠️ Side Effects &amp; Warnings</span><i class="fas fa-chevron-down" id="sideEffectsAccBodyIcon"></i>
+        </div>
+        <div class="accordion-body" id="sideEffectsAccBody"><ul id="sideEffectsList"></ul></div>
+      </div>
+      <div class="section-title">Diet Goal Suggestion</div>
+      <div class="goal-tabs">
+        <button class="goal-tab" onclick="setGoal('loss',this)" data-t="weightLoss">⬇️ Loss</button>
+        <button class="goal-tab active" onclick="setGoal('maintain',this)" data-t="maintain">✅ Maintain</button>
+        <button class="goal-tab" onclick="setGoal('gain',this)" data-t="weightGain">⬆️ Gain</button>
+      </div>
+      <div id="goalSuggestion" class="goal-suggestion"></div>
+      <div class="action-row">
+        <button class="btn-primary" onclick="shareResult()"><i class="fas fa-share-alt"></i> <span data-t="share">Share</span></button>
+        <button class="btn-secondary" onclick="addToProteinLog()"><i class="fas fa-plus"></i> Log</button>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn-primary" onclick="showPage('home-page')" style="width:100%;background:linear-gradient(135deg,#667eea,#764ba2);">
+          <i class="fas fa-home"></i> <span data-t="backHome">Back to Home</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BMI PAGE -->
+  <div id="bmi-page" class="page">
+    <div class="page-header"><div class="ph-icon">⚖️</div><h1>BMI Calculator</h1><p>Calculate your Body Mass Index</p></div>
+    <div class="form-group"><label>Weight (kg)</label><input type="number" class="form-input" id="bmiWeight" placeholder="e.g. 70" min="1" max="300"></div>
+    <div class="form-group"><label>Height (cm)</label><input type="number" class="form-input" id="bmiHeight" placeholder="e.g. 175" min="50" max="300"></div>
+    <div class="form-group"><label>Age (years)</label><input type="number" class="form-input" id="bmiAge" placeholder="e.g. 25" min="1" max="120"></div>
+    <button class="btn-primary" onclick="calculateBMI()" style="width:100%;margin-bottom:16px;"><i class="fas fa-calculator"></i> Calculate BMI</button>
+    <div id="bmiResult" class="bmi-result">
+      <div class="bmi-num" id="bmiNum">0</div>
+      <div class="bmi-cat" id="bmiCat">Normal</div>
+      <div class="bmi-desc" id="bmiDesc"></div>
+      <div class="bmi-scale"><div class="bmi-marker" id="bmiMarker"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:4px;color:var(--text-light);"><span>Under</span><span>Normal</span><span>Over</span><span>Obese</span></div>
+    </div>
+  </div>
+
+  <!-- PROTEIN TRACKER PAGE -->
+  <div id="protein-page" class="page">
+    <div class="page-header"><div class="ph-icon">💪</div><h1>Protein Tracker</h1><p>Track your daily protein intake</p></div>
+    <div class="form-group" style="display:flex;gap:10px;align-items:flex-end;">
+      <div style="flex:1;"><label>Daily Protein Goal (g)</label><input type="number" class="form-input" id="proteinGoalInput" placeholder="e.g. 120" min="10" max="500"></div>
+      <button class="btn-primary" onclick="saveProteinGoal()" style="flex:none;padding:14px 16px;"><i class="fas fa-save"></i></button>
+    </div>
+    <div class="protein-stats">
+      <div class="stat-card"><div class="stat-val" id="ptConsumed">0g</div><div class="stat-label">Consumed Today</div></div>
+      <div class="stat-card"><div class="stat-val" id="ptGoal">--g</div><div class="stat-label">Daily Goal</div></div>
+    </div>
+    <div class="progress-container">
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Today's Progress</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="proteinProgressBar" style="width:0%"></div></div>
+      <div class="progress-label"><span id="ptProgressText">0 / -- g</span><span id="ptProgressPct">0%</span></div>
+    </div>
+    <div class="section-title">Today's Log</div>
+    <div class="protein-log" id="proteinLogList">
+      <div style="padding:24px;text-align:center;color:var(--text-light);font-size:13px;">No protein logged today. Scan food to add!</div>
+    </div>
+    <button class="btn-secondary" onclick="resetProteinLog()" style="width:100%;margin-top:12px;padding:12px;"><i class="fas fa-trash"></i> Reset Today's Log</button>
+  </div>
+
+  <!-- HISTORY PAGE -->
+  <div id="history-page" class="page">
+    <div class="page-header"><div class="ph-icon">📋</div><h1>Scan History</h1><p>Your last 10 food scans</p></div>
+    <div id="historyList"></div>
+    <button class="btn-secondary" onclick="clearHistory()" style="width:100%;margin-top:12px;padding:12px;border-color:#e74c3c;color:#e74c3c;"><i class="fas fa-trash"></i> Clear History</button>
+    <!-- ============================================================
+         ADSTERA AD UNIT - HISTORY PAGE BOTTOM BANNER
+         Paste your Adstera script inside this div below
+         ============================================================ -->
+    <div class="ad-container" style="margin-top:16px;">
+      <div class="ad-placeholder"><span>Advertisement — Paste Adstera Banner Here</span></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div id="settings-page" class="page">
+    <div class="page-header"><div class="ph-icon">⚙️</div><h1>Settings</h1><p>App configuration</p></div>
+    <div class="scan-grid" style="grid-template-columns:1fr;">
+      <button class="scan-btn" style="flex-direction:row;justify-content:flex-start;gap:14px;" onclick="showPage('privacy-page')"><div class="btn-icon bg-blue">🔒</div><div><div class="btn-label">Privacy Policy</div><div class="btn-sub">How we handle data</div></div></button>
+      <button class="scan-btn" style="flex-direction:row;justify-content:flex-start;gap:14px;" onclick="showPage('about-page')"><div class="btn-icon bg-green">ℹ️</div><div><div class="btn-label">About Us</div><div class="btn-sub">App information</div></div></button>
+      <button class="scan-btn" style="flex-direction:row;justify-content:flex-start;gap:14px;" onclick="showPage('contact-page')"><div class="btn-icon bg-orange">📧</div><div><div class="btn-label">Contact</div><div class="btn-sub">Get in touch</div></div></button>
+      <button class="scan-btn" style="flex-direction:row;justify-content:flex-start;gap:14px;" onclick="showPage('terms-page')"><div class="btn-icon bg-purple">📜</div><div><div class="btn-label">Terms &amp; Conditions</div><div class="btn-sub">Usage terms</div></div></button>
+    </div>
+    <div class="info-section">
+      <h3><i class="fas fa-info-circle"></i> App Info</h3>
+      <p><strong>App Name:</strong> AI Food Nutrition Scanner (NutriScan AI)<br><strong>Version:</strong> 2.0.0<br><strong>AI Powered By:</strong> OpenRouter API (Vision Models)<br><strong>Purpose:</strong> Educational nutritional estimates<br><strong>Platform:</strong> Web / Android / iOS (PWA)</p>
+    </div>
+  </div>
+
+  <!-- PRIVACY POLICY PAGE -->
+  <div id="privacy-page" class="static-page">
+    <button onclick="showPage('settings-page')" style="background:none;border:none;color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back</button>
+    <div class="page-header"><div class="ph-icon">🔒</div><h1>Privacy Policy</h1><p>Last updated: January 2025</p></div>
+    <div class="info-section"><h3><i class="fas fa-eye-slash"></i> No Data Collection</h3><p>AI Food Nutrition Scanner does <strong>NOT</strong> collect, store, or transmit any personal data. All food analysis happens locally in your browser or via anonymous API calls. We do not store your name, email, location, or any identifying information.</p></div>
+    <div class="info-section"><h3><i class="fas fa-camera"></i> Image Usage</h3><p>When you scan food using the camera or upload an image, it is processed locally or sent to OpenRouter AI API for analysis only. Images are <strong>NOT</strong> stored on any server. They are processed momentarily and discarded after generating nutritional estimates.</p></div>
+    <div class="info-section"><h3><i class="fas fa-database"></i> Local Storage</h3><p>This app uses your device's localStorage to save scan history (last 10 entries), daily protein tracking data, user preferences (dark mode, language), and your API key (stored locally only). This data never leaves your device.</p></div>
+    <div class="info-section"><h3><i class="fas fa-ad"></i> Advertising</h3><p>This app may display advertisements from Adstera and other third-party ad networks. These networks may use cookies and device identifiers to serve relevant ads. Please review Adstera's privacy policy for more information.</p></div>
+    <div class="info-section"><h3><i class="fas fa-graduation-cap"></i> Educational Disclaimer</h3><p>All nutritional information is for <strong>educational purposes only</strong>. AI-generated values are estimates and may not be accurate. Do not use this app for medical diagnosis or treatment. Always consult a qualified nutritionist or doctor.</p></div>
+    <div class="info-section"><h3><i class="fas fa-child"></i> Children's Privacy</h3><p>This app does not knowingly collect information from children under 13. If you believe your child has provided personal information, please contact us immediately.</p></div>
+    <div class="info-section"><h3><i class="fas fa-envelope"></i> Contact</h3><p>For privacy concerns: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="38484a514e595b4178564d4c4a514b5b5956595116594848">[email&#160;protected]</a></strong></p></div>
+  </div>
+
+  <!-- ABOUT PAGE -->
+  <div id="about-page" class="static-page">
+    <button onclick="showPage('settings-page')" style="background:none;border:none;color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back</button>
+    <div class="page-header"><div class="ph-icon">🥗</div><h1>About Us</h1><p>AI Food Nutrition Scanner</p></div>
+    <div class="info-section"><h3><i class="fas fa-rocket"></i> Our Mission</h3><p>NutriScan AI was created to make nutritional awareness accessible to everyone. By leveraging the power of AI vision models via OpenRouter, we provide instant, educational nutritional insights for thousands of food items — completely free of charge.</p></div>
+    <div class="info-section"><h3><i class="fas fa-robot"></i> AI Technology</h3><p>This app uses OpenRouter AI API with advanced vision models (Gemini 2.0 Flash, Llama Vision, GPT-4o, Claude) to analyze food images and generate detailed nutritional information in real-time when an API key is configured. Without an API key, it uses a local estimated database.</p></div>
+    <div class="info-section"><h3><i class="fas fa-star"></i> Key Features</h3><ul><li>📷 AI-powered food scanning via camera</li><li>🖼️ Gallery image analysis</li><li>📊 Detailed macro &amp; micronutrient data</li><li>⚖️ BMI Calculator with health insights</li><li>💪 Daily protein intake tracker</li><li>📋 Scan history (last 10 items)</li><li>🌙 Dark mode support</li><li>🇮🇳 Hindi/English language toggle</li><li>📤 Share results via native share API</li><li>📴 Offline fallback with local database</li></ul></div>
+    <div class="info-section" style="background:linear-gradient(135deg,#d5f5e3,#a9dfbf);border:none;"><h3 style="color:#1e8449;"><i class="fas fa-heart"></i> Our Values</h3><p style="color:#1e8449;">Health is wealth. We believe everyone deserves access to nutritional education. Our app is built with privacy-first principles — no data collection, no tracking, just pure nutritional insights.</p></div>
+  </div>
+
+  <!-- CONTACT PAGE -->
+  <div id="contact-page" class="static-page">
+    <button onclick="showPage('settings-page')" style="background:none;border:none;color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back</button>
+    <div class="page-header"><div class="ph-icon">📧</div><h1>Contact Us</h1><p>We're here to help</p></div>
+    <div class="contact-links">
+      <a class="contact-link" href="/cdn-cgi/l/email-protection#790a0c0909160b0d39170c0d0b100a1a1817181057180909"><div class="cl-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b)"><i class="fas fa-envelope"></i></div><div><div class="cl-label">Email Support</div><div class="cl-val"><span class="__cf_email__" data-cfemail="25565055554a5751654b5051574c5646444b444c0b445555">[email&#160;protected]</span></div></div></a>
+      <a class="contact-link" href="/cdn-cgi/l/email-protection#3c4c4e554a5d5f457c5249484e554f5f5d525d55125d4c4c"><div class="cl-icon" style="background:linear-gradient(135deg,#3498db,#2980b9)"><i class="fas fa-shield-alt"></i></div><div><div class="cl-label">Privacy Concerns</div><div class="cl-val"><span class="__cf_email__" data-cfemail="f484869d8295978db49a8180869d8797959a959dda958484">[email&#160;protected]</span></div></div></a>
+      <a class="contact-link" href="/cdn-cgi/l/email-protection#4a283f2d390a243f3e382339292b242b23642b3a3a"><div class="cl-icon" style="background:linear-gradient(135deg,#2ecc71,#27ae60)"><i class="fas fa-bug"></i></div><div><div class="cl-label">Report a Bug</div><div class="cl-val"><span class="__cf_email__" data-cfemail="9cfee9fbefdcf2e9e8eef5effffdf2fdf5b2fdecec">[email&#160;protected]</span></div></div></a>
+    </div>
+    <div class="info-section" style="margin-top:16px;"><h3><i class="fas fa-clock"></i> Response Time</h3><p>We typically respond within 24–48 business hours. For urgent privacy matters, please mark your email with "URGENT" in the subject line.</p></div>
+  </div>
+
+  <!-- TERMS PAGE -->
+  <div id="terms-page" class="static-page">
+    <button onclick="showPage('settings-page')" style="background:none;border:none;color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;gap:6px;"><i class="fas fa-arrow-left"></i> Back</button>
+    <div class="page-header"><div class="ph-icon">📜</div><h1>Terms &amp; Conditions</h1><p>Please read carefully</p></div>
+    <div class="info-section"><h3><i class="fas fa-file-contract"></i> Acceptance of Terms</h3><p>By using NutriScan AI, you agree to these Terms and Conditions. If you disagree with any part of these terms, please discontinue use of the application immediately.</p></div>
+    <div class="info-section"><h3><i class="fas fa-graduation-cap"></i> Educational Use Only</h3><p>NutriScan AI provides nutritional information for <strong>educational and informational purposes only</strong>. The information is not intended to replace professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider.</p></div>
+    <div class="info-section"><h3><i class="fas fa-exclamation-circle"></i> Accuracy Disclaimer</h3><p>While we strive to provide accurate nutritional data, values generated by AI may be estimates and not 100% precise. Nutritional content can vary based on brand, preparation method, portion size, and regional food differences.</p></div>
+    <div class="info-section"><h3><i class="fas fa-ban"></i> Prohibited Uses</h3><ul><li>Using nutritional data for medical diagnosis</li><li>Redistribution of app content commercially</li><li>Reverse engineering the application</li><li>Using the app for any illegal purposes</li></ul></div>
+    <div class="info-section"><h3><i class="fas fa-gavel"></i> Limitation of Liability</h3><p>NutriScan AI and its developers shall not be held liable for any health decisions made based on information provided by this application. Use of this app is entirely at your own risk.</p></div>
+    <div class="info-section"><h3><i class="fas fa-sync"></i> Changes to Terms</h3><p>We reserve the right to modify these terms at any time. Continued use of the application after changes constitutes acceptance of the new terms. Contact: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9aaaca9a9b6abad99b7acadabb0aabab8b7b8b0f7b8a9a9">[email&#160;protected]</a></strong></p></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="showPage('home-page')"><span class="nav-icon">🏠</span><span class="nav-label" data-t="navHome">Home</span></button>
+    <button class="nav-item" id="nav-scan" onclick="triggerCamera()"><span class="nav-icon">📷</span><span class="nav-label" data-t="navScan">Scan</span></button>
+    <button class="nav-item" id="nav-history" onclick="showPage('history-page')"><span class="nav-icon">📋</span><span class="nav-label" data-t="navHistory">History</span></button>
+    <button class="nav-item" id="nav-protein" onclick="showPage('protein-page')"><span class="nav-icon">💪</span><span class="nav-label">Protein</span></button>
+    <button class="nav-item" id="nav-settings" onclick="showPage('settings-page')"><span class="nav-icon">⚙️</span><span class="nav-label" data-t="navSettings">Settings</span></button>
+  </div>
+
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleFile(this)" style="display:none">
+  <input type="file" id="galleryInput" accept="image/*" onchange="handleFile(this)" style="display:none">
+</div>
+
+
+<!-- INTERSTITIAL AD -->
+<div id="interstitialAd">
+  <div class="inter-box">
+    <div class="inter-header">
+      <span style="display:none">Advertisement</span>
+      <button class="inter-close" id="interCloseBtn" onclick="closeInterstitial()" disabled style="cursor:not-allowed;opacity:0.5;">✕</button>
+    </div>
+    <div class="inter-content">
+      <!-- ============================================================
+           ADSTERA AD UNIT - INTERSTITIAL (Shows every 3 scans)
+           Paste your Adstera Interstitial / Popunder script below
+           ============================================================ -->
+      <div class="inter-placeholder"><div class="ip-icon">📢</div><p style="font-size:13px;color:#999;">Paste Adstera Interstitial Script Here</p></div>
+    </div>
+    <div class="inter-countdown">Please wait: <strong id="interCountdown">5</strong>s</div>
+  </div>
+</div>
+
+<!-- EXIT POPUP AD -->
+<div id="exitPopup">
+  <div class="exit-box">
+    <h3>Thanks for using NutriScan AI! 🥗</h3>
+    <p>Keep tracking your nutrition daily for a healthier lifestyle.</p>
+    <!-- ============================================================
+         ADSTERA AD UNIT - EXIT POPUP AD
+         Paste your Adstera exit popup / native ad script below
+         ============================================================ -->
+    <div class="ad-container" style="margin-bottom:12px;"><div class="ad-placeholder"><span>Paste Adstera Exit Ad Script Here</span></div></div>
+    <div class="exit-btns">
+      <button class="btn-stay" onclick="document.getElementById('exitPopup').classList.remove('show')">Stay</button>
+      <button class="btn-exit" onclick="document.getElementById('exitPopup').classList.remove('show')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SNACKBAR -->
+<div id="snackbar">Message</div>
+
+<script>
+'use strict';
+
+// ================================================================
+// STATE
+// ================================================================
+let currentLang = localStorage.getItem('lang') || 'en';
+let darkMode = localStorage.getItem('darkMode') === 'true';
+let scanCount = parseInt(localStorage.getItem('scanCount') || '0');
+let lastResultData = null;
+
+// ================================================================
+// TRANSLATIONS
+// ================================================================
+const T = {
+  en: { heroTitle:'🤖 AI Nutrition Scanner', heroDesc:'Scan any food and get instant AI-powered nutrition analysis with detailed health insights', disclaimer:'⚠️ Educational purpose only. Consult a nutritionist for medical advice.', quickActions:'Quick Actions', scanCamera:'Scan Food', useCamera:'Use Camera', fromGallery:'From Gallery', pickImage:'Pick Image', proteinTrack:'Protein Tracker', dailyGoal:'Daily Goal', scanHistory:'Scan History', lastScans:'Last 10 Scans', tipTitle:'Pro Tip', tipText:'Take clear, well-lit photos of food for more accurate AI analysis.', totalCalories:'Total Calories', share:'Share', backHome:'Back to Home', weightLoss:'⬇️ Loss', maintain:'✅ Maintain', weightGain:'⬆️ Gain', navHome:'Home', navScan:'Scan', navHistory:'History', navSettings:'Settings' },
+  hi: { heroTitle:'🤖 AI पोषण स्कैनर', heroDesc:'किसी भी खाने को स्कैन करें और तुरंत AI-संचालित पोषण विश्लेषण पाएं', disclaimer:'⚠️ केवल शैक्षणिक उद्देश्य। चिकित्सा सलाह के लिए पोषण विशेषज्ञ से परामर्श करें।', quickActions:'त्वरित क्रियाएं', scanCamera:'खाना स्कैन करें', useCamera:'कैमरा उपयोग करें', fromGallery:'गैलरी से', pickImage:'छवि चुनें', proteinTrack:'प्रोटीन ट्रैकर', dailyGoal:'दैनिक लक्ष्य', scanHistory:'स्कैन इतिहास', lastScans:'अंतिम 10 स्कैन', tipTitle:'प्रो टिप', tipText:'अधिक सटीक AI विश्लेषण के लिए स्पष्ट, अच्छी रोशनी में खाने की तस्वीरें लें।', totalCalories:'कुल कैलोरी', share:'शेयर करें', backHome:'होम पर वापस', weightLoss:'⬇️ वजन कम', maintain:'✅ बनाए रखें', weightGain:'⬆️ वजन बढ़ाएं', navHome:'होम', navScan:'स्कैन', navHistory:'इतिहास', navSettings:'सेटिंग' }
+};
+
+// ================================================================
+// LOCAL NUTRITION DATABASE (Offline Fallback)
+// ================================================================
+const nutritionDB = {
+  pizza:{ name:'Pizza',emoji:'🍕',calories:266,protein:11,carbs:33,fat:10,fiber:2.3,vitamins:['Vit B12','Calcium','Iron','Vit A'],ingredients:['Refined flour','Tomato sauce','Mozzarella cheese','Olive oil','Yeast','Salt'],benefits:[{icon:'💪',t:'Protein Source',d:'Contains cheese protein'},{icon:'⚡',t:'Energy Dense',d:'High calorie fuel'},{icon:'🦴',t:'Calcium Rich',d:'From cheese'},{icon:'🍅',t:'Lycopene',d:'From tomatoes'}],sideEffects:['High in sodium','Refined carbs can spike blood sugar','High saturated fat if overconsumed','Not ideal for lactose intolerant'] },
+  burger:{ name:'Burger',emoji:'🍔',calories:295,protein:17,carbs:24,fat:14,fiber:1.3,vitamins:['Vit B6','Zinc','Iron','Vit B12'],ingredients:['Beef patty','Burger bun','Lettuce','Tomato','Cheese','Condiments'],benefits:[{icon:'💪',t:'High Protein',d:'Good muscle fuel'},{icon:'🦴',t:'Iron Rich',d:'From red meat'},{icon:'⚡',t:'Energy Dense',d:'Sustained energy'},{icon:'🧠',t:'B Vitamins',d:'Brain health'}],sideEffects:['High saturated fat','High calorie density','May contain preservatives','High sodium'] },
+  apple:{ name:'Apple',emoji:'🍎',calories:52,protein:0.3,carbs:14,fat:0.2,fiber:2.4,vitamins:['Vit C','Vit K','Potassium','Vit B6'],ingredients:['Natural sugars','Dietary fiber','Water','Quercetin','Catechin'],benefits:[{icon:'❤️',t:'Heart Health',d:'Reduces cholesterol'},{icon:'🦷',t:'Dental Health',d:'Natural tooth cleaning'},{icon:'🧬',t:'Antioxidants',d:'Fights free radicals'},{icon:'⚖️',t:'Weight Loss',d:'Low cal, filling fiber'},{icon:'🫁',t:'Lung Health',d:'Quercetin benefits'},{icon:'🩺',t:'Blood Sugar',d:'Low glycemic index'}],sideEffects:['Seeds contain amygdalin (avoid)','High sugar in dried form','May interact with medications in excess'] },
+  rice:{ name:'White Rice',emoji:'🍚',calories:130,protein:2.7,carbs:28,fat:0.3,fiber:0.4,vitamins:['Vit B1','Vit B3','Manganese','Phosphorus'],ingredients:['Starch','Protein','Water','Trace minerals'],benefits:[{icon:'⚡',t:'Quick Energy',d:'Easily digestible carbs'},{icon:'🌾',t:'Gluten Free',d:'Safe for celiac'},{icon:'🫀',t:'Heart Friendly',d:'Low sodium'},{icon:'💊',t:'B Vitamins',d:'Metabolic support'}],sideEffects:['High glycemic index','Low in fiber','May spike blood sugar','Not ideal for diabetics in large portions'] },
+  banana:{ name:'Banana',emoji:'🍌',calories:89,protein:1.1,carbs:23,fat:0.3,fiber:2.6,vitamins:['Vit B6','Vit C','Potassium','Magnesium'],ingredients:['Natural sugars','Resistant starch','Water','Pectin'],benefits:[{icon:'⚡',t:'Instant Energy',d:'Natural sugars'},{icon:'💪',t:'Muscle Function',d:'Rich in potassium'},{icon:'😊',t:'Mood Booster',d:'Tryptophan → Serotonin'},{icon:'🏃',t:'Pre-Workout',d:'Great exercise fuel'},{icon:'🫀',t:'Heart Health',d:'Potassium benefits'},{icon:'💊',t:'Vit B6',d:'Brain function'}],sideEffects:['High in natural sugars','May cause constipation','Not ideal for diabetics in excess'] },
+  salad:{ name:'Green Salad',emoji:'🥗',calories:20,protein:1.8,carbs:3.5,fat:0.3,fiber:2.1,vitamins:['Vit K','Vit C','Vit A','Folate'],ingredients:['Leafy greens','Cucumber','Tomato','Carrots','Olive oil dressing'],benefits:[{icon:'⚖️',t:'Weight Loss',d:'Very low calorie'},{icon:'💧',t:'Hydration',d:'High water content'},{icon:'🧬',t:'Antioxidants',d:'Multiple plant nutrients'},{icon:'❤️',t:'Heart Health',d:'Reduces inflammation'},{icon:'👁️',t:'Eye Health',d:'Vit A and lutein'},{icon:'🦴',t:'Bone Health',d:'Vitamin K'}],sideEffects:['Contamination risk if unwashed','Dressings very high in calories','Can cause bloating','Vit K may interfere with blood thinners'] },
+  chicken:{ name:'Chicken Breast',emoji:'🍗',calories:165,protein:31,carbs:0,fat:3.6,fiber:0,vitamins:['Vit B3','Vit B6','Phosphorus','Selenium'],ingredients:['Lean protein','Saturated fat','Water','Collagen'],benefits:[{icon:'💪',t:'Lean Protein',d:'31g per 100g!'},{icon:'🏋️',t:'Muscle Building',d:'Complete amino acids'},{icon:'⚖️',t:'Weight Loss',d:'High protein, low fat'},{icon:'🦴',t:'Bone Health',d:'Phosphorus rich'},{icon:'🛡️',t:'Immunity',d:'Selenium antioxidant'},{icon:'⚡',t:'Metabolism',d:'Niacin boosts'}],sideEffects:['Raw chicken contains Salmonella (cook thoroughly)','Overcooking destroys nutrients','Some farmed chicken contain antibiotics'] },
+  egg:{ name:'Egg',emoji:'🥚',calories:155,protein:13,carbs:1.1,fat:11,fiber:0,vitamins:['Vit D','Vit B12','Choline','Selenium'],ingredients:['Egg white albumin','Egg yolk lecithin','Cholesterol','Lutein'],benefits:[{icon:'💪',t:'Complete Protein',d:'All 9 amino acids'},{icon:'🧠',t:'Brain Health',d:'Rich in choline'},{icon:'👁️',t:'Eye Health',d:'Lutein & zeaxanthin'},{icon:'⚡',t:'Energy',d:'Vit B12 support'},{icon:'🦴',t:'Bone Health',d:'Vitamin D'},{icon:'⚖️',t:'Weight Loss',d:'Very filling'}],sideEffects:['High cholesterol in yolk','Salmonella risk if undercooked','Egg allergy common','High in saturated fat'] },
+  milk:{ name:'Milk',emoji:'🥛',calories:61,protein:3.2,carbs:4.8,fat:3.3,fiber:0,vitamins:['Calcium','Vit D','Vit B12','Potassium'],ingredients:['Casein protein','Whey protein','Lactose','Calcium'],benefits:[{icon:'🦴',t:'Strong Bones',d:'High calcium'},{icon:'💪',t:'Muscle Growth',d:'Whey + casein protein'},{icon:'🧠',t:'Brain Health',d:'B vitamins'},{icon:'😴',t:'Better Sleep',d:'Tryptophan content'},{icon:'🦷',t:'Dental Health',d:'Calcium fortifies'},{icon:'⚡',t:'Energy',d:'Complete nutrition'}],sideEffects:['Lactose intolerance affects many adults','Possible acne trigger','Full fat high in saturated fat','Some have casein allergy'] },
+  oats:{ name:'Oatmeal',emoji:'🫙',calories:68,protein:2.4,carbs:12,fat:1.4,fiber:1.7,vitamins:['Vit B1','Manganese','Phosphorus','Magnesium'],ingredients:['Beta-glucan fiber','Avenin protein','Starch','Iron','Zinc'],benefits:[{icon:'❤️',t:'Heart Health',d:'Beta-glucan lowers LDL'},{icon:'🩺',t:'Blood Sugar',d:'Low glycemic index'},{icon:'⚖️',t:'Weight Loss',d:'High fiber = filling'},{icon:'🧬',t:'Gut Health',d:'Prebiotic fiber'},{icon:'💪',t:'Protein',d:'Plant-based protein'},{icon:'⚡',t:'Sustained Energy',d:'Slow release carbs'}],sideEffects:['May be cross-contaminated with gluten','Phytic acid reduces mineral absorption','Large amounts can cause bloating'] }
+};
+
+const goalSuggestions = {
+  loss: (f) => `For weight loss, ${f.name} can be included in controlled portions. At ${f.calories} kcal/100g, ${f.calories<100?'this is an excellent low-calorie choice! ✅':f.calories<200?'moderate consumption is fine. ⚠️':'limit portions to 50-80g. ⚠️'} Pair with fiber-rich vegetables and stay hydrated.`,
+  maintain: (f) => `For weight maintenance, ${f.name} offers a balanced profile. At ${f.calories} kcal and ${f.protein}g protein per 100g, ${f.protein>15?'the high protein supports muscle maintenance. ✅':'pair with lean proteins for better balance. 💡'} A 100-150g portion fits well in a balanced diet.`,
+  gain: (f) => `For muscle/weight gain, ${f.name} ${f.calories>200?'is an excellent calorie-dense choice! ✅':'provides moderate calories — consider larger portions or adding nuts and dairy. 💡'} With ${f.protein}g protein, ${f.protein>20?'the high protein is ideal for muscle synthesis. 🏋️':'consider adding protein supplements to meet daily goals. 💊'}`
+};
+
+// ================================================================
+// INIT
+// ================================================================
+window.addEventListener('DOMContentLoaded', () => {
+  if (darkMode) { document.documentElement.setAttribute('data-theme','dark'); document.getElementById('darkBtn').innerHTML='<i class="fas fa-sun"></i>'; }
+  applyLang(currentLang);
+  document.getElementById('langToggle').textContent = currentLang==='en'?'HI':'EN';
+  renderHistory();
+  renderProteinPage();
+
+  window.addEventListener('popstate', () => showPage('home-page'));
+});
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function showPage(id) {
+  document.querySelectorAll('.page, .static-page').forEach(p => p.classList.remove('active'));
+  const t = document.getElementById(id);
+  if (t) t.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = {'home-page':'nav-home','history-page':'nav-history','protein-page':'nav-protein','settings-page':'nav-settings','result-page':'nav-scan'};
+  const el = document.getElementById(navMap[id]);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ================================================================
+// LANGUAGE
+// ================================================================
+function toggleLang() {
+  currentLang = currentLang==='en'?'hi':'en';
+  localStorage.setItem('lang', currentLang);
+  applyLang(currentLang);
+  document.getElementById('langToggle').textContent = currentLang==='en'?'HI':'EN';
+}
+function applyLang(lang) {
+  const d = T[lang];
+  document.querySelectorAll('[data-t]').forEach(el => { const k=el.getAttribute('data-t'); if(d[k]) el.textContent=d[k]; });
+}
+
+// ================================================================
+// DARK MODE
+// ================================================================
+function toggleDark() {
+  darkMode = !darkMode;
+  localStorage.setItem('darkMode', darkMode);
+  document.documentElement.setAttribute('data-theme', darkMode?'dark':'');
+  document.getElementById('darkBtn').innerHTML = darkMode?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+}
+
+// ================================================================
+// FILE HANDLING
+// ================================================================
+function triggerCamera() { document.getElementById('cameraInput').click(); }
+function triggerGallery() { document.getElementById('galleryInput').click(); }
+function handleFile(input) {
+  if (!input.files||!input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => processImage(e.target.result, file.name);
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+async function processImage(base64, filename) {
+  showLoading('Analyzing food with AI...');
+  showPage('result-page');
+  document.getElementById('previewContainer').style.display = 'block';
+  document.getElementById('previewImg').src = base64;
+  document.getElementById('resultContent').style.display = 'none';
+
+  const apiKey = localStorage.getItem('openRouterKey');
+  let data = null;
+
+  if (apiKey) {
+    try {
+      showLoading('Connecting to AI...');
+      data = await analyzeWithOpenRouter(base64, apiKey);
+    } catch(err) {
+      console.warn('API error, using fallback:', err.message);
+      showSnackbar('AI unavailable, using estimates');
+    }
+  }
+
+  if (!data) data = getFallbackNutrition(filename);
+
+  scanCount++;
+  localStorage.setItem('scanCount', scanCount);
+  hideLoading();
+  renderResult(data);
+  saveToHistory(data);
+
+  if (scanCount % 3 === 0) setTimeout(() => showInterstitial(), 1000);
+}
+
+// ================================================================
+// OPENROUTER AI ANALYSIS
+// ================================================================
+async function analyzeWithOpenRouter(base64, apiKey) {
+  const model = localStorage.getItem('aiModel') || 'google/gemini-2.0-flash-exp:free';
+  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'HTTP-Referer': window.location.origin, 'X-Title': 'NutriScan AI' },
+    body: JSON.stringify({
+      model,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: base64 } },
+          { type: 'text', text: `You are a professional nutritionist. Analyze this food image and provide nutritional data per 100g serving. Respond ONLY with valid JSON, no other text, no markdown:
+{"name":"Food Name","emoji":"🍎","calories":100,"protein":2.5,"carbs":20.0,"fat":1.2,"fiber":3.1,"vitamins":["Vitamin C","Potassium"],"ingredients":["ingredient 1","ingredient 2","ingredient 3","ingredient 4"],"benefits":[{"icon":"❤️","t":"Heart Health","d":"Brief benefit"},{"icon":"💪","t":"Muscle Support","d":"Brief benefit"},{"icon":"🧬","t":"Antioxidants","d":"Brief benefit"},{"icon":"⚡","t":"Energy","d":"Brief benefit"}],"sideEffects":["Side effect if consumed in excess","Another consideration"],"confidence":"High"}
+IMPORTANT: Return ONLY the JSON object. Values should be realistic nutritional estimates per 100g.` }
+        ]
+      }],
+      max_tokens: 800,
+      temperature: 0.2
+    })
+  });
+
+  if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message||'API error '+resp.status); }
+  const d = await resp.json();
+  const content = d.choices?.[0]?.message?.content || '';
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('No JSON in response');
+  const parsed = JSON.parse(jsonMatch[0]);
+  parsed.isAI = true;
+  return parsed;
+}
+
+// ================================================================
+// FALLBACK NUTRITION
+// ================================================================
+function getFallbackNutrition(filename) {
+  const name = filename.toLowerCase().replace(/[^a-z]/g,'');
+  for (const [k,v] of Object.entries(nutritionDB)) {
+    if (name.includes(k)) return {...v, isAI:false};
+  }
+  const items = Object.values(nutritionDB);
+  const base = items[Math.floor(Math.random()*items.length)];
+  const vary = v => Math.round((v*(1+(Math.random()-0.5)*0.2))*10)/10;
+  return {...base, calories:vary(base.calories), protein:vary(base.protein), carbs:vary(base.carbs), fat:vary(base.fat), fiber:vary(base.fiber||0), isAI:false};
+}
+
+// ================================================================
+// RENDER RESULT
+// ================================================================
+function renderResult(data) {
+  lastResultData = data;
+  document.getElementById('foodNameDisplay').textContent = data.name;
+  document.getElementById('foodEmojiDisplay').textContent = data.emoji||'🍽️';
+  document.getElementById('confidenceBadge').textContent = data.isAI ? '✅ AI Analyzed' : '📊 Estimated Value';
+  document.getElementById('confidenceBadge').style.background = data.isAI ? 'rgba(255,255,255,0.3)' : 'rgba(255,200,0,0.4)';
+  animateNum('calDisplay', data.calories);
+  animateNum('proteinDisplay', data.protein);
+  animateNum('carbsDisplay', data.carbs);
+  animateNum('fatDisplay', data.fat);
+  animateNum('fiberDisplay', data.fiber||0);
+  const g = data.calories<100?'Low Calorie':data.calories<200?'Moderate':data.calories<300?'High Calorie':'Very High Calorie';
+  document.getElementById('calGrade').textContent = g;
+  const cc = ['chip-green','chip-blue','chip-orange','chip-purple'];
+  document.getElementById('vitaminChips').innerHTML = (data.vitamins||[]).map((v,i)=>`<span class="chip ${cc[i%4]}">${v}</span>`).join('');
+  document.getElementById('benefitsGrid').innerHTML = (data.benefits||[]).map((b,i)=>`<div class="benefit-card" style="animation-delay:${i*0.1}s"><div class="b-icon">${b.icon}</div><div class="b-title">${b.t}</div><div class="b-desc">${b.d}</div></div>`).join('');
+  document.getElementById('ingredientsList').innerHTML = (data.ingredients||[]).map(i=>`<li>${i}</li>`).join('');
+  document.getElementById('sideEffectsList').innerHTML = (data.sideEffects||[]).map(s=>`<li>${s}</li>`).join('');
+  document.querySelectorAll('.goal-tab').forEach(b=>b.classList.remove('active'));
+  const maintainBtn = document.querySelector('.goal-tab[onclick*="maintain"]');
+  if (maintainBtn) { maintainBtn.classList.add('active'); setGoal('maintain',maintainBtn); }
+  document.getElementById('resultContent').style.display = 'block';
+}
+
+function animateNum(id, target) {
+  const el = document.getElementById(id);
+  const n = parseFloat(target)||0;
+  let c = 0, s = n/20;
+  const iv = setInterval(()=>{ c+=s; if(c>=n){c=n;clearInterval(iv);} el.textContent=Math.round(c*10)/10; },50);
+}
+
+function setGoal(goal, btn) {
+  document.querySelectorAll('.goal-tab').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (lastResultData) {
+    const fn = goalSuggestions[goal];
+    document.getElementById('goalSuggestion').textContent = fn?fn(lastResultData):'';
+  }
+}
+
+function toggleAccordion(bodyId) {
+  const body = document.getElementById(bodyId);
+  const icon = document.getElementById(bodyId+'Icon');
+  body.classList.toggle('open');
+  if (icon) icon.style.transform = body.classList.contains('open')?'rotate(180deg)':'';
+}
+
+// ================================================================
+// BMI CALCULATOR
+// ================================================================
+function calculateBMI() {
+  const w = parseFloat(document.getElementById('bmiWeight').value);
+  const h = parseFloat(document.getElementById('bmiHeight').value)/100;
+  if (!w||!h||h<=0) { showSnackbar('Please enter valid weight and height'); return; }
+  const bmi = w/(h*h), br = Math.round(bmi*10)/10;
+  let cat, col, desc, mp;
+  if (bmi<18.5) { cat='Underweight'; col='#3498db'; desc='You are underweight. Consider increasing calorie and nutrient intake. Consult a nutritionist.'; mp=(bmi/40)*100; }
+  else if (bmi<25) { cat='Normal Weight ✅'; col='#2ecc71'; desc='Your BMI is in the healthy range. Maintain your balanced diet and active lifestyle!'; mp=((bmi-18.5)/6.5)*25+25; }
+  else if (bmi<30) { cat='Overweight'; col='#f39c12'; desc='You are slightly overweight. Consider more vegetables, less processed food, and regular exercise.'; mp=((bmi-25)/5)*25+50; }
+  else { cat='Obese'; col='#e74c3c'; desc='BMI indicates obesity. Please consult a healthcare professional for personalized guidance.'; mp=Math.min(75+((bmi-30)/10)*25,95); }
+  const el = document.getElementById('bmiResult');
+  el.style.display='block'; el.style.background=col+'20'; el.style.borderLeft=`4px solid ${col}`;
+  document.getElementById('bmiNum').textContent=br; document.getElementById('bmiNum').style.color=col;
+  document.getElementById('bmiCat').textContent=cat; document.getElementById('bmiCat').style.color=col;
+  document.getElementById('bmiDesc').textContent=desc;
+  setTimeout(()=>{ document.getElementById('bmiMarker').style.left=mp+'%'; },100);
+}
+
+// ================================================================
+// PROTEIN TRACKER
+// ================================================================
+function saveProteinGoal() {
+  const g = parseInt(document.getElementById('proteinGoalInput').value);
+  if (!g||g<10) { showSnackbar('Please enter a valid goal (min 10g)'); return; }
+  localStorage.setItem('proteinGoal',g); renderProteinPage(); showSnackbar('✅ Protein goal saved!');
+}
+function renderProteinPage() {
+  const goal = parseInt(localStorage.getItem('proteinGoal')||'0');
+  const log = getProteinLog();
+  const consumed = log.reduce((s,i)=>s+i.protein,0);
+  document.getElementById('ptConsumed').textContent = Math.round(consumed)+'g';
+  document.getElementById('ptGoal').textContent = goal?goal+'g':'--g';
+  if (goal) document.getElementById('proteinGoalInput').value = goal;
+  const pct = goal?Math.min((consumed/goal)*100,100):0;
+  document.getElementById('proteinProgressBar').style.width = pct+'%';
+  document.getElementById('ptProgressText').textContent = `${Math.round(consumed)} / ${goal||'--'} g`;
+  document.getElementById('ptProgressPct').textContent = goal?Math.round(pct)+'%':'--';
+  const listEl = document.getElementById('proteinLogList');
+  if (!log.length) { listEl.innerHTML='<div style="padding:24px;text-align:center;color:var(--text-light);font-size:13px;">No protein logged today. Scan food to add!</div>'; return; }
+  listEl.innerHTML = log.map(i=>`<div class="log-item"><div><div class="log-food">${i.emoji} ${i.food}</div><div class="log-time">${i.time}</div></div><div class="log-protein">+${i.protein}g</div></div>`).join('');
+}
+function getProteinLog() {
+  const today = new Date().toDateString();
+  return JSON.parse(localStorage.getItem('proteinLog')||'[]').filter(i=>i.date===today);
+}
+function addToProteinLog() {
+  if (!lastResultData) return;
+  const log = JSON.parse(localStorage.getItem('proteinLog')||'[]');
+  log.push({ food:lastResultData.name, emoji:lastResultData.emoji||'🍽️', protein:parseFloat(lastResultData.protein)||0, date:new Date().toDateString(), time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) });
+  localStorage.setItem('proteinLog', JSON.stringify(log.slice(-50)));
+  renderProteinPage(); showSnackbar('✅ Added to protein log!');
+}
+function resetProteinLog() {
+  const today = new Date().toDateString();
+  const log = JSON.parse(localStorage.getItem('proteinLog')||'[]');
+  localStorage.setItem('proteinLog', JSON.stringify(log.filter(i=>i.date!==today)));
+  renderProteinPage(); showSnackbar('Protein log cleared for today');
+}
+
+// ================================================================
+// SCAN HISTORY
+// ================================================================
+function saveToHistory(data) {
+  const h = JSON.parse(localStorage.getItem('scanHistory')||'[]');
+  h.unshift({...data, time:new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})});
+  localStorage.setItem('scanHistory', JSON.stringify(h.slice(0,10)));
+}
+function renderHistory() {
+  const h = JSON.parse(localStorage.getItem('scanHistory')||'[]');
+  const el = document.getElementById('historyList');
+  if (!h.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><h3 style="font-family:Poppins,sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">No Scan History</h3><p style="font-size:13px;">Start scanning food to see your history here!</p></div>'; return; }
+  el.innerHTML = h.map((item,i)=>`<div class="history-item" onclick="reopenHistory(${i})"><div class="history-thumb">${item.emoji||'🍽️'}</div><div class="history-info"><div class="history-name">${item.name}</div><div class="history-cal">P: ${item.protein}g · C: ${item.carbs}g · F: ${item.fat}g</div><div class="history-time">${item.time}</div></div><div class="history-cal-badge">${item.calories} kcal</div></div>`).join('');
+}
+function reopenHistory(i) {
+  const h = JSON.parse(localStorage.getItem('scanHistory')||'[]');
+  if (!h[i]) return;
+  lastResultData = h[i];
+  document.getElementById('previewContainer').style.display = 'none';
+  document.getElementById('resultContent').style.display = 'none';
+  showPage('result-page');
+  renderResult(h[i]);
+}
+function clearHistory() { localStorage.removeItem('scanHistory'); renderHistory(); showSnackbar('History cleared'); }
+
+// ================================================================
+// SHARE
+// ================================================================
+async function shareResult() {
+  if (!lastResultData) return;
+  const d = lastResultData;
+  const text = `🥗 NutriScan AI Results\n\n🍽️ ${d.name}\n🔥 Calories: ${d.calories} kcal\n💪 Protein: ${d.protein}g\n🍞 Carbs: ${d.carbs}g\n🥑 Fat: ${d.fat}g\n\n⚠️ Educational estimates only.`;
+  if (navigator.share) { try { await navigator.share({title:'NutriScan AI',text}); return; } catch(e){} }
+  try { await navigator.clipboard.writeText(text); showSnackbar('✅ Copied to clipboard!'); } catch(e) { showSnackbar('Share not supported'); }
+}
+
+// ================================================================
+// API KEY
+// ================================================================
+
+// ================================================================
+// MODALS
+// ================================================================
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function closeModalOnOutside(e,id) { if(e.target.id===id) closeModal(id); }
+
+// ================================================================
+// INTERSTITIAL
+// ================================================================
+function showInterstitial() {
+  const ad = document.getElementById('interstitialAd');
+  const btn = document.getElementById('interCloseBtn');
+  const cd = document.getElementById('interCountdown');
+  ad.classList.add('show'); btn.disabled=true; btn.style.cursor='not-allowed'; btn.style.opacity='0.5';
+  let s=5;
+  const t = setInterval(()=>{ s--; cd.textContent=s; if(s<=0){ clearInterval(t); btn.disabled=false; btn.style.cursor='pointer'; btn.style.opacity='1'; ad.querySelector('.inter-countdown').innerHTML='<span style="color:var(--primary);font-weight:700;">✓ You can close now</span>'; }},1000);
+}
+function closeInterstitial() { document.getElementById('interstitialAd').classList.remove('show'); }
+
+// ================================================================
+// UTILS
+// ================================================================
+function showLoading(t) { document.getElementById('loadingText').textContent=t||'Loading...'; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function showSnackbar(msg) {
+  const sb = document.getElementById('snackbar'); sb.textContent=msg; sb.classList.add('show');
+  setTimeout(()=>sb.classList.remove('show'),3000);
+}
+
+// ================================================================
+// BACK BUTTON / EXIT
+// ================================================================
+let backPressCount = 0;
+document.addEventListener('backbutton', e => {
+  e.preventDefault();
+  const active = document.querySelector('.page.active, .static-page.active');
+  if (active && active.id !== 'home-page') { showPage('home-page'); backPressCount=0; }
+  else {
+    backPressCount++;
+    if (backPressCount>=2) { document.getElementById('exitPopup').classList.add('show'); backPressCount=0; }
+    else { showSnackbar('Press back again to exit'); setTimeout(()=>backPressCount=0,2000); }
+  }
+});
+</script>
+</body>
+</html>
